@@ -76,7 +76,8 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "baseHref": "/"
             }
           },
           "defaultConfiguration": "production"
@@ -90,6 +91,9 @@
             "development": {
               "browserTarget": "app:build:development"
             }
+          },
+          "options": {
+            "browserTarget": "app:build:development"
           },
           "defaultConfiguration": "development"
         },
