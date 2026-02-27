@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {PlateService} from '../services/plate.service';
 import {PlateQueueManagerService} from '../services/plate-queue-manager.service';
 import {Plate} from '../plate.interface';
@@ -44,6 +45,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   public readonly i18n: any;
   public loading: boolean = true;
+  public isFullscreen: boolean = false;
   public platesStats: PlateStats[] = [];
   public globalStats: GlobalStats = {
     totalProgress: 0,
@@ -122,7 +124,8 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     private _messageService: MessageService,
     private _plateMenuItemsService: PlateMenuItemsService,
     private _categoryService: CategoryService,
-    private _themeService: ThemeService
+    private _themeService: ThemeService,
+    private _route: ActivatedRoute
   ) {
     this.i18n = _i18nService.instance;
     
@@ -145,6 +148,8 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isFullscreen = !!this._route.snapshot.data?.['fullscreen'];
+
     // Carica le categorie per il grafico di distribuzione
     this._categoryService.getAll().subscribe(categories => {
       this._categoriesMap.clear();

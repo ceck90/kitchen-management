@@ -31,6 +31,11 @@ const routes: Routes = [
     component: PlatesComponent
   },
   {
+    path: 'summary/fullscreen',
+    component: PlatesSummaryComponent,
+    data: { hideNavbar: true, fullscreen: true }
+  },
+  {
     path: 'summary',
     component: PlatesSummaryComponent
   },
