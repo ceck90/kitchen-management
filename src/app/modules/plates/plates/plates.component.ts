@@ -87,25 +87,17 @@ export class PlatesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
+    const carousel = this._elementRef.nativeElement.querySelector('.plates-carousel');
+
     // mobile swipe touch hooks
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('touchstart', () => this._swipeStart(this._normalizeEvent(event)));
+    carousel.addEventListener('touchstart', (e: TouchEvent) => this._swipeStart(this._normalizeEvent(e)));
+    carousel.addEventListener('touchmove', (e: TouchEvent) => this._swipeMove(this._normalizeEvent(e)));
+    carousel.addEventListener('touchend', () => this._swipeEnd());
 
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('touchmove', () => this._swipeMove(this._normalizeEvent(event)));
-
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('touchend', () => this._swipeEnd());
-
-    // mouse click swipe hooks
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('mousedown', () => this._swipeStart(this._normalizeEvent(event)));
-
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('mousemove', () => this._swipeMove(this._normalizeEvent(event)));
-
-    this._elementRef.nativeElement.querySelector('.plates-carousel')
-      .addEventListener('mouseup', () => this._swipeEnd());
+    // mouse drag swipe hooks
+    carousel.addEventListener('mousedown', (e: MouseEvent) => this._swipeStart(this._normalizeEvent(e)));
+    carousel.addEventListener('mousemove', (e: MouseEvent) => this._swipeMove(this._normalizeEvent(e)));
+    carousel.addEventListener('mouseup', () => this._swipeEnd());
   }
 
   public ngOnDestroy(): void {
@@ -175,9 +167,11 @@ export class PlatesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _swipeStart(event: Touch) {
     this._start = event.screenX;
+    this._end = event.screenX; // reset so a tap without move gives delta = 0
   }
 
   private _swipeMove(event: Touch) {
+    if (this._start === null) return; // ignore mouse moves without press
     this._end = event.screenX;
 
     const delta = this._getDeltaSwipe();

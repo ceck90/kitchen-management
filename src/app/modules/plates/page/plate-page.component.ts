@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Title} from '@angular/platform-browser';
 import {ActivatedRoute} from "@angular/router";
 import {config, Observable, Subscription} from "rxjs";
 import {Plate} from "../plate.interface";
@@ -98,6 +99,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
               private _plateService: PlateService,
               private _plateQueueManagerService: PlateQueueManagerService,
               private _webSocketService: WebSocketService,
+              private _titleService: Title,
               private _messageService: MessageService) {
     this._pkmiNotification$ = this._webSocketService.pkmiNotifications$;
   }
@@ -128,6 +130,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
     this._subs.add(this._plateService.getById(this._id!)
       .subscribe((plate: Plate) => {
         this.config = this._enrichPlateWithQuickMoveSettings(plate);
+        if (plate.name) this._titleService.setTitle(plate.name);
         this._plateService.getStatusById(this._id!).subscribe({
           next: (items: PlateMenuItem[]) => {
             this.queue.values = items;
@@ -139,7 +142,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
 
     this._subs.add(
       this._pkmiNotification$.subscribe((notification: PKMINotification | null) => {
-        console.log('plate page notification: ' + notification);
+        console.log('plate page notification: ', notification);
         if (notification) {
           if (this.showNotify) {
             const msgData = WebSocketService.getNotificationMsgData(notification);
@@ -159,6 +162,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this._subs.unsubscribe();
+    this._titleService.setTitle('Kitchen Management');
   }
 
   public handleItemEvent(event: any): void {
