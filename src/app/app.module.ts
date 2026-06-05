@@ -11,6 +11,7 @@ import {SharedModule} from "./modules/shared/shared.module";
 import {I18nService} from "./services/i18n.service";
 import {HttpClientModule} from '@angular/common/http';
 import {WebSocketService} from './services/web-socket-service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,13 @@ import {WebSocketService} from './services/web-socket-service';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    SharedModule
+    SharedModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     I18nService,

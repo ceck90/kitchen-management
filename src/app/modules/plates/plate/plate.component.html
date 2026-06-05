@@ -10,7 +10,7 @@
   <section *ngSwitchCase="plateMode.On" class="on">
     <header [style.backgroundColor]="config.color!" [class.expanded]="!showExpand" [class.dark-bg]="isColorDark(config.color)">
       <div class="header-content">
-        <h3>{{config.name}}</h3>
+        <h3>{{config.name}}<span *ngIf="!showExpand" class="item-count-badge">{{progressItems.length}}</span></h3>
         <div class="header-badges">
           <p-tag *ngIf="maxDelayMinutes > 0"
                  [severity]="delaySeverity"
