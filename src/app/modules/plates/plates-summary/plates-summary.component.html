@@ -6,7 +6,7 @@
     </h2>
     <div class="header-actions">
       <div class="auto-refresh-controls">
-        <p-inputSwitch [(ngModel)]="autoRefreshEnabled" 
+        <p-inputSwitch [(ngModel)]="autoRefreshEnabled"
                        (onChange)="onAutoRefreshChange()"
                        [pTooltip]="i18n.SUMMARY.AUTO_REFRESH_TOOLTIP"
                        tooltipPosition="bottom">
@@ -23,16 +23,16 @@
                     tooltipPosition="bottom">
         </p-dropdown>
       </div>
-      <button pButton pRipple 
-              icon="pi pi-refresh" 
-              [label]="i18n.SUMMARY.REFRESH_BUTTON" 
+      <button pButton pRipple
+              icon="pi pi-refresh"
+              [label]="i18n.SUMMARY.REFRESH_BUTTON"
               class="p-button-sm p-button-outlined"
               (click)="refreshData()"
               [loading]="loading">
       </button>
-      <button pButton pRipple 
-              icon="pi pi-times" 
-              [label]="i18n.SUMMARY.CLOSE_BUTTON" 
+      <button pButton pRipple
+              icon="pi pi-times"
+              [label]="i18n.SUMMARY.CLOSE_BUTTON"
               class="p-button-sm p-button-text"
               routerLink="/plates">
       </button>
@@ -127,14 +127,14 @@
           </div>
         </div>
       </div>
-      
-      <p-table [value]="platesStats" 
+
+      <p-table [value]="platesStats"
                styleClass="modern-table p-datatable-sm p-datatable-striped"
                [paginator]="true"
                [rows]="10"
                [showCurrentPageReport]="true"
                [currentPageReportTemplate]="'{totalRecords} ' + i18n.SUMMARY.PLATES_TOTAL">
-        
+
         <ng-template pTemplate="header">
           <tr>
             <th>{{i18n.SUMMARY.TABLE_HEADERS.PLATE}}</th>
@@ -155,12 +155,12 @@
               </div>
             </td>
             <td>
-              <p-badge [value]="stat.progressCount + ''" 
+              <p-badge [value]="stat.progressCount + ''"
                        [severity]="stat.progressCount > 0 ? 'info' : 'secondary'">
               </p-badge>
             </td>
             <td>
-              <p-badge [value]="stat.todoCount + ''" 
+              <p-badge [value]="stat.todoCount + ''"
                        [severity]="stat.todoCount > 0 ? 'warning' : 'secondary'">
               </p-badge>
             </td>
@@ -179,23 +179,23 @@
               <span class="time-badge">{{formatDateTime(stat.oldestOrderTime)}}</span>
             </td>
             <td>
-              <i *ngIf="stat.maxDelayMinutes === 0" 
-                 class="pi pi-check-circle" 
+              <i *ngIf="stat.maxDelayMinutes === 0"
+                 class="pi pi-check-circle"
                  style="color: var(--green-500); font-size: 1.2rem"
                  [pTooltip]="i18n.SUMMARY.TOOLTIPS.NO_DELAY">
               </i>
-              <i *ngIf="stat.maxDelayMinutes > 0 && stat.maxDelayMinutes < 10" 
-                 class="pi pi-thumbs-up" 
+              <i *ngIf="stat.maxDelayMinutes > 0 && stat.maxDelayMinutes < 10"
+                 class="pi pi-thumbs-up"
                  style="color: var(--green-500); font-size: 1.2rem"
                  [pTooltip]="i18n.SUMMARY.TOOLTIPS.GOOD_TIMES">
               </i>
-              <i *ngIf="stat.maxDelayMinutes >= 10 && stat.maxDelayMinutes < 20" 
-                 class="pi pi-exclamation-triangle" 
+              <i *ngIf="stat.maxDelayMinutes >= 10 && stat.maxDelayMinutes < 20"
+                 class="pi pi-exclamation-triangle"
                  style="color: var(--orange-500); font-size: 1.2rem"
                  [pTooltip]="i18n.SUMMARY.TOOLTIPS.WATCH_TIMES">
               </i>
-              <i *ngIf="stat.maxDelayMinutes >= 20" 
-                 class="pi pi-times-circle" 
+              <i *ngIf="stat.maxDelayMinutes >= 20"
+                 class="pi pi-times-circle"
                  style="color: var(--red-500); font-size: 1.2rem"
                  [pTooltip]="i18n.SUMMARY.TOOLTIPS.CRITICAL_DELAY">
               </i>
@@ -225,15 +225,15 @@
           <p>{{i18n.SUMMARY.WORKLOAD_DESC}}</p>
         </div>
         <div class="chart-content chart-content-wide">
-          <p-chart type="bar" 
-                   [data]="plateWorkloadChartData" 
+          <p-chart type="bar"
+                   [data]="plateWorkloadChartData"
                    [options]="chartOptions"
                    height="300px">
           </p-chart>
         </div>
       </div>
 
-      <div class="chart-card" *ngIf="plateDelayChartData">
+      <div class="chart-card" *ngIf="plateDelayChartData && !isFullscreen">
         <div class="chart-header">
           <h3>
             <i class="pi pi-clock"></i>
@@ -242,8 +242,8 @@
           <p>{{i18n.SUMMARY.DELAY_DESC}}</p>
         </div>
         <div class="chart-content">
-          <p-chart type="bar" 
-                   [data]="plateDelayChartData" 
+          <p-chart type="bar"
+                   [data]="plateDelayChartData"
                    [options]="chartOptions"
                    height="300px">
           </p-chart>
@@ -252,15 +252,15 @@
     </div>
 
     <!-- Statistiche Ordini per Periodo -->
-    <div class="orders-stats-section">
+    <div class="orders-stats-section" *ngIf="!isFullscreen">
       <div class="section-header">
         <div class="header-title">
           <i class="pi pi-calendar"></i>
           <h3>Statistiche Ordini per Periodo</h3>
         </div>
-        <button pButton pRipple 
-                icon="pi pi-file-pdf" 
-                [label]="i18n.SUMMARY.EXPORT_PDF_BUTTON" 
+        <button pButton pRipple
+                icon="pi pi-file-pdf"
+                [label]="i18n.SUMMARY.EXPORT_PDF_BUTTON"
                 class="p-button-sm p-button-success"
                 (click)="exportToPDF()"
                 [loading]="analysisLoading"
@@ -275,15 +275,15 @@
           <i class="pi pi-filter"></i>
           <span>Seleziona un periodo per analizzare gli ordini</span>
         </div>
-        
+
         <div class="date-inputs-row">
           <div class="date-field">
             <label for="dateFrom">
               <i class="pi pi-calendar-plus"></i>
               Data Inizio
             </label>
-            <p-calendar id="dateFrom" 
-                       [(ngModel)]="dateFrom" 
+            <p-calendar id="dateFrom"
+                       [(ngModel)]="dateFrom"
                        dateFormat="dd/mm/yy"
                        [showIcon]="true"
                        [style]="{'width': '100%'}"
@@ -296,9 +296,9 @@
               <i class="pi pi-calendar-minus"></i>
               Data Fine
             </label>
-            <p-calendar id="dateTo" 
-                       [(ngModel)]="dateTo" 
-                       [minDate]="dateFrom" 
+            <p-calendar id="dateTo"
+                       [(ngModel)]="dateTo"
+                       [minDate]="dateFrom"
                        dateFormat="dd/mm/yy"
                        [showIcon]="true"
                        [style]="{'width': '100%'}"
@@ -307,11 +307,11 @@
           </div>
 
           <div class="search-button-container">
-            <button pButton pRipple 
-                    icon="pi pi-search" 
+            <button pButton pRipple
+                    icon="pi pi-search"
                     label="Cerca"
                     class="p-button-lg p-button-primary"
-                    [loading]="statsLoading" 
+                    [loading]="statsLoading"
                     (click)="searchByDate()">
             </button>
           </div>
@@ -348,8 +348,8 @@
     </div>
 
     <!-- Analisi Ordini Avanzate -->
-    <div class="advanced-analysis-section" *ngIf="!analysisLoading">
-      
+    <div class="advanced-analysis-section" *ngIf="!analysisLoading && !isFullscreen">
+
       <!-- KPI Tasso di Cancellazione e Tipologia Servizio -->
       <div class="kpi-cards">
         <div class="kpi-card" [ngClass]="cancellationRate > 10 ? 'warning' : 'success'">
@@ -396,7 +396,7 @@
 
       <!-- Grafici Analisi -->
       <div class="analysis-charts-grid">
-        
+
         <!-- Grafico 1: Top Prodotti -->
         <div id="topProductsChart" class="chart-card full-width" *ngIf="topProductsChartData">
           <div class="chart-header">
@@ -407,8 +407,8 @@
             <p>{{i18n.SUMMARY.TOP_PRODUCTS_DESC}}</p>
           </div>
           <div class="chart-content chart-content-wide">
-            <p-chart type="bar" 
-                     [data]="topProductsChartData" 
+            <p-chart type="bar"
+                     [data]="topProductsChartData"
                      [options]="chartOptions"
                      height="350px">
             </p-chart>
@@ -425,8 +425,8 @@
             <p>Distribuzione degli ordini durante il giorno</p>
           </div>
           <div class="chart-content chart-content-wide">
-            <p-chart type="line" 
-                     [data]="hourlyOrdersChartData" 
+            <p-chart type="line"
+                     [data]="hourlyOrdersChartData"
                      [options]="hourlyChartOptions"
                      height="350px">
             </p-chart>
@@ -443,8 +443,8 @@
             <p>Tempo medio di completamento ordini per fascia oraria</p>
           </div>
           <div class="chart-content">
-            <p-chart type="bar" 
-                     [data]="hourlyPerformanceChartData" 
+            <p-chart type="bar"
+                     [data]="hourlyPerformanceChartData"
                      [options]="chartOptions"
                      height="300px">
             </p-chart>
@@ -461,8 +461,8 @@
             <p>Ripartizione ordini per categoria di prodotto</p>
           </div>
           <div class="chart-content">
-            <p-chart type="doughnut" 
-                     [data]="categoryDistributionChartData" 
+            <p-chart type="doughnut"
+                     [data]="categoryDistributionChartData"
                      [options]="doughnutChartOptions"
                      height="300px">
             </p-chart>
@@ -479,8 +479,8 @@
             <p>Distribuzione ordini per tipo di servizio</p>
           </div>
           <div class="chart-content">
-            <p-chart type="doughnut" 
-                     [data]="takeAwayDistributionChartData" 
+            <p-chart type="doughnut"
+                     [data]="takeAwayDistributionChartData"
                      [options]="doughnutChartOptions"
                      height="300px">
             </p-chart>
@@ -497,7 +497,7 @@
             <p>Ripartizione degli ordini per stato nel periodo selezionato</p>
           </div>
           <div class="chart-content">
-            <p-chart type="doughnut" 
+            <p-chart type="doughnut"
                      [data]="statsData"
                      [options]="doughnutChartOptions"
                      height="300px">
@@ -515,8 +515,8 @@
             <p>Confronto tra asporto e consumazione al tavolo per categoria</p>
           </div>
           <div class="chart-content chart-content-wide">
-            <p-chart type="bar" 
-                     [data]="categoryByServiceChartData" 
+            <p-chart type="bar"
+                     [data]="categoryByServiceChartData"
                      [options]="stackedBarChartOptions"
                      height="300px">
             </p-chart>
@@ -533,8 +533,8 @@
             <p>Stazioni di lavoro con più ordini nel periodo</p>
           </div>
           <div class="chart-content chart-content-wide">
-            <p-chart type="bar" 
-                     [data]="topStationsChartData" 
+            <p-chart type="bar"
+                     [data]="topStationsChartData"
                      [options]="horizontalBarChartOptions"
                      height="400px">
             </p-chart>
@@ -545,13 +545,13 @@
     </div>
 
     <!-- Loading analisi -->
-    <div *ngIf="analysisLoading" class="loading-container">
+    <div *ngIf="analysisLoading && !isFullscreen" class="loading-container">
       <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
       <p>Caricamento analisi avanzate...</p>
     </div>
 
     <!-- Nessun dato disponibile -->
-    <div *ngIf="!analysisLoading && !topProductsChartData && !hourlyOrdersChartData && !categoryDistributionChartData" 
+    <div *ngIf="!isFullscreen && !analysisLoading && !topProductsChartData && !hourlyOrdersChartData && !categoryDistributionChartData"
          class="loading-container">
       <i class="pi pi-info-circle" style="font-size: 2rem; color: #2196f3"></i>
       <p>Nessun ordine trovato per il periodo selezionato</p>

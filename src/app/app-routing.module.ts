@@ -6,7 +6,8 @@ export enum Routing {
   Plates = "plates",
   Settings = "settings",
   PlateMenuItems = "plate-menu-items",
-  PlatesSummary = "plates/summary"
+  PlatesSummary = "plates/summary",
+  PlatesSummaryFullscreen = "plates/summary/fullscreen"
 }
 
 const routes: Routes = [

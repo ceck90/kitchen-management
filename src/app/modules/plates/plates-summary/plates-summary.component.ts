@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {PlateService} from '../services/plate.service';
 import {PlateQueueManagerService} from '../services/plate-queue-manager.service';
 import {Plate} from '../plate.interface';
@@ -44,6 +45,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   public readonly i18n: any;
   public loading: boolean = true;
+  public isFullscreen: boolean = false;
   public platesStats: PlateStats[] = [];
   public globalStats: GlobalStats = {
     totalProgress: 0,
@@ -123,15 +125,16 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     private _plateMenuItemsService: PlateMenuItemsService,
     private _categoryService: CategoryService,
     private _themeService: ThemeService
+    private _route: ActivatedRoute
   ) {
     this.i18n = _i18nService.instance;
-    
+
     // Load auto-refresh settings from localStorage
     this._loadAutoRefreshSettings();
-    
+
     // Initialize chart options based on current theme
     this._initChartOptions();
-    
+
     // Subscribe to theme changes
     this._subscriptions.add(
       this._themeService.currentTheme$.subscribe(() => {
@@ -145,6 +148,8 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isFullscreen = !!this._route.snapshot.data?.['fullscreen'];
+
     // Carica le categorie per il grafico di distribuzione
     this._categoryService.getAll().subscribe(categories => {
       this._categoriesMap.clear();
@@ -155,11 +160,11 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       });
       console.log('Categories loaded:', this._categoriesMap.size, 'categories');
     });
-    
+
     // Carica le piastre e inizializza le code prima di caricare i dati
     this._plateService.getAll().subscribe(plates => {
       // Controlla se le code sono già inizializzate
-      const queuesInitialized = plates.every(plate => 
+      const queuesInitialized = plates.every(plate =>
         plate.id ? this._plateQueueManager.getQueue(plate.id) : true
       );
 
@@ -173,7 +178,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         this.loadData();
       }
     });
-    
+
     // Carica le statistiche di oggi all'avvio
     this._subscriptions.add(
       this._statsService.getTodayStats().subscribe((stats: Stats[]) => {
@@ -182,10 +187,10 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         }
       })
     );
-    
+
     // Carica analisi ordini di oggi
     this.loadOrderAnalysis(new Date(), new Date());
-    
+
     // Avvia auto-refresh se abilitato
     if (this.autoRefreshEnabled) {
       this._startAutoRefresh();
@@ -202,7 +207,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     const textColor = isDark ? '#e2e8f0' : '#1f2937';
     const gridColor = isDark ? 'rgba(226, 232, 240, 0.1)' : 'rgba(0, 0, 0, 0.05)';
     const tooltipBg = isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(0, 0, 0, 0.8)';
-    
+
     this.chartOptions = {
       plugins: {
         legend: {
@@ -367,8 +372,8 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { 
-          display: true, 
+        legend: {
+          display: true,
           position: 'top',
           labels: {
             color: textColor
@@ -391,7 +396,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         }
       },
       scales: {
-        x: { 
+        x: {
           stacked: true,
           ticks: {
             color: textColor
@@ -400,8 +405,8 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
             color: gridColor
           }
         },
-        y: { 
-          stacked: true, 
+        y: {
+          stacked: true,
           beginAtZero: true,
           ticks: {
             color: textColor
@@ -439,7 +444,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         }
       },
       scales: {
-        x: { 
+        x: {
           beginAtZero: true,
           ticks: {
             color: textColor
@@ -462,13 +467,13 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   loadData(): void {
     this.loading = true;
-    
+
     this._plateService.getAll().subscribe(plates => {
       this.platesStats = [];
       let totalDelays: number[] = [];
-      
+
       const enabledPlates = plates.filter(p => p.id && p.enabled);
-      
+
       // Ricarica sempre le code per avere dati aggiornati
       this._plateQueueManager.load(plates).subscribe(() => {
         this.processPlatesData(enabledPlates, totalDelays);
@@ -480,7 +485,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     // Svuota gli array prima di ripopolarli
     this.platesStats = [];
     totalDelays.length = 0;
-    
+
     plates.forEach(plate => {
       if (plate.id) {
         const queue = this._plateQueueManager.getQueue(plate.id);
@@ -488,10 +493,10 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
           return; // Skip if queue is not initialized
         }
         const items = queue.values;
-        
+
         const progressItems = items.filter((i: PlateMenuItem) => i.status === Status.Progress);
         const todoItems = items.filter((i: PlateMenuItem) => i.status === Status.Todo);
-        
+
         const stats = this.calculatePlateStats(plate, progressItems);
         this.platesStats.push({
           plate,
@@ -499,23 +504,23 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
           todoCount: todoItems.length,
           ...stats
         });
-        
+
         // Aggiungi ai ritardi totali
         if (stats.maxDelayMinutes > 0) {
           totalDelays.push(stats.maxDelayMinutes);
         }
       }
     });
-    
+
     // Calcola statistiche globali
     this.calculateGlobalStats(totalDelays);
-    
+
     // Ordina per ritardo massimo decrescente
     this.platesStats.sort((a, b) => b.maxDelayMinutes - a.maxDelayMinutes);
-    
+
     // Genera i grafici delle piastre
     this.generatePlateCharts();
-    
+
     this.loading = false;
   }
 
@@ -544,7 +549,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         const delayMs = now - createdTime.getTime();
         const delayMinutes = Math.floor(delayMs / 60000);
         delays.push(delayMinutes);
-        
+
         if (!oldestTime || createdTime < oldestTime) {
           oldestTime = createdTime;
         }
@@ -565,10 +570,10 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       totalTodo: this.platesStats.reduce((sum, s) => sum + s.todoCount, 0),
       totalPlates: this.platesStats.length,
       activePlates: this.platesStats.filter(s => s.progressCount > 0 || s.todoCount > 0).length,
-      avgDelayAllPlates: totalDelays.length > 0 ? 
+      avgDelayAllPlates: totalDelays.length > 0 ?
         Math.floor(totalDelays.reduce((a, b) => a + b, 0) / totalDelays.length) : 0,
       maxDelayAllPlates: totalDelays.length > 0 ? Math.max(...totalDelays) : 0,
-      criticalOrders: this.platesStats.reduce((sum, s) => 
+      criticalOrders: this.platesStats.reduce((sum, s) =>
         sum + s.progressItems.filter(item => {
           if (!item.createdDate) return false;
           const delayMinutes = Math.floor((new Date().getTime() - new Date(item.createdDate).getTime()) / 60000);
@@ -585,7 +590,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
   formatTime(minutes: number): string {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    
+
     if (hours > 0) {
       return `${hours}h ${mins}min`;
     }
@@ -606,7 +611,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   onAutoRefreshChange(): void {
     this._saveAutoRefreshSettings();
-    
+
     if (this.autoRefreshEnabled) {
       this._startAutoRefresh();
       this._messageService.add({
@@ -628,7 +633,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   onIntervalChange(): void {
     this._saveAutoRefreshSettings();
-    
+
     if (this.autoRefreshEnabled) {
       this._stopAutoRefresh();
       this._startAutoRefresh();
@@ -684,7 +689,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     }
 
     // Ordina le piastre per nome per una visualizzazione più ordinata
-    const sortedStats = [...this.platesStats].sort((a, b) => 
+    const sortedStats = [...this.platesStats].sort((a, b) =>
       (a.plate.name || '').localeCompare(b.plate.name || '')
     );
 
@@ -712,7 +717,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     // Grafico 2: Ritardi medi per piastra
     // Mostra solo le piastre con ordini attivi
     const platesWithOrders = sortedStats.filter(s => s.progressCount > 0);
-    
+
     if (platesWithOrders.length > 0) {
       const plateNamesWithDelays = platesWithOrders.map(s => s.plate.name);
       const avgDelays = platesWithOrders.map(s => s.avgDelayMinutes);
@@ -746,16 +751,16 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   public loadOrderAnalysis(fromDate: Date, toDate: Date): void {
     this.analysisLoading = true;
-    
+
     const event = {
       first: 0,
       rows: 10000 // Prendiamo molti record per l'analisi
     };
-    
+
     // Carica sia ordini completati/cancellati che ordini in corso
     const completed$ = this._plateMenuItemsService.getAllPaged(true, event);
     const active$ = this._plateMenuItemsService.getAllPaged(false, event);
-    
+
     // Combina i risultati
     this._subscriptions.add(
       completed$.subscribe({
@@ -767,30 +772,30 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
                   ...(completedPage.elements || []),
                   ...(activePage.elements || [])
                 ];
-                
+
                 console.log('Total orders loaded for analysis:', allOrders.length);
-                
+
                 // Filtra per data (confronta solo giorno/mese/anno, ignora ore)
                 const fromDateOnly = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
                 const toDateOnly = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate(), 23, 59, 59);
-                
+
                 console.log('Date range:', fromDateOnly, 'to', toDateOnly);
-                
+
                 const filteredOrders = allOrders.filter((order: PlateMenuItem) => {
                   if (!order.createdDate) return false;
                   const orderDate = new Date(order.createdDate);
                   const orderDateOnly = new Date(orderDate.getFullYear(), orderDate.getMonth(), orderDate.getDate());
                   const isInRange = orderDateOnly >= fromDateOnly && orderDateOnly <= toDateOnly;
-                  
+
                   if (allOrders.indexOf(order) < 3) {
                     console.log('Sample order date:', orderDate, 'normalized:', orderDateOnly, 'in range:', isInRange);
                   }
-                  
+
                   return isInRange;
                 });
-                
+
                 console.log('Filtered orders for date range:', filteredOrders.length);
-                
+
                 this.generateOrderAnalysis(filteredOrders);
                 this.analysisLoading = false;
               },
@@ -827,7 +832,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   private generateOrderAnalysis(orders: PlateMenuItem[]): void {
     console.log('generateOrderAnalysis called with', orders.length, 'orders');
-    
+
     if (orders.length === 0) {
       console.log('No orders to analyze, clearing all charts');
       this.topProductsChartData = undefined;
@@ -890,10 +895,10 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     // 2. Tasso di cancellazione
     this.completedOrdersCount = orders.filter(o => o.status === Status.Done).length;
     this.cancelledOrdersCount = orders.filter(o => o.status === Status.Cancelled).length;
-    this.cancellationRate = orders.length > 0 
-      ? Math.round((this.cancelledOrdersCount / orders.length) * 100) 
+    this.cancellationRate = orders.length > 0
+      ? Math.round((this.cancelledOrdersCount / orders.length) * 100)
       : 0;
-    
+
     console.log('Cancellation rate:', this.cancellationRate, '%');
 
     // 3. Top prodotti più ordinati
@@ -924,7 +929,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         data: topProducts.map(p => p.count)
       }]
     };
-    
+
     console.log('Top products chart generated:', topProducts.length, 'products');
 
     // 3. Andamento ordini per ora
@@ -971,7 +976,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         fill: true
       }]
     };
-    
+
     console.log('Hourly orders chart generated:', {
       range: `${minHour}:00 - ${maxHour}:00`,
       totalOrders: hourRange.reduce((a, b) => a + b, 0),
@@ -986,7 +991,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       const category = categoryId ? this._categoriesMap.get(categoryId) : undefined;
       const categoryName = category?.name || 'Senza Categoria';
       categoryCount.set(categoryName, (categoryCount.get(categoryName) || 0) + 1);
-      
+
       // Log primi 3 ordini per debug
       if (index < 3) {
         console.log('Sample order category (using categoryId):', {
@@ -1001,10 +1006,10 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     console.log('Category counts:', Array.from(categoryCount.entries()));
 
     const categories = Array.from(categoryCount.entries());
-    
+
     if (categories.length > 0) {
       const categoryColors = [
-        '#2196f3', '#ff9800', '#4caf50', '#f44336', 
+        '#2196f3', '#ff9800', '#4caf50', '#f44336',
         '#9c27b0', '#00bcd4', '#ffeb3b', '#795548'
       ];
 
@@ -1015,7 +1020,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
           backgroundColor: categoryColors.slice(0, categories.length)
         }]
       };
-      
+
       console.log('Category distribution chart generated:', categories.length, 'categories', categories);
     } else {
       this.categoryDistributionChartData = undefined;
@@ -1025,7 +1030,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     // 5. Performance Temporale (ritardo medio per fascia oraria)
     // Calcoliamo il tempo medio tra creazione e completamento per fascia oraria
     const hourlyDelays: { [hour: number]: { total: number; count: number } } = {};
-    
+
     // Inizializza per tutte le ore attive
     for (let h = 10; h < 24; h++) {
       hourlyDelays[h] = { total: 0, count: 0 };
@@ -1037,13 +1042,13 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       if (order.createdDate) {
         const createdDate = new Date(order.createdDate);
         const hour = createdDate.getHours();
-        
+
         if (hour >= 10 && hour < 24) {
           // Per ordini completati usiamo il tempo medio stimato basato sull'ora
           // oppure possiamo usare una media generale
           // Per semplicità, per ordini completati usiamo una stima fissa per ora
           let delayMinutes = 0;
-          
+
           if (order.status === Status.Done) {
             // Stima: ordini completati hanno avuto un tempo di circa 15-30 min
             // Aumenta nelle ore di punta (12-14, 19-22)
@@ -1073,7 +1078,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         const avgDelay = Math.round(hourlyDelays[h].total / hourlyDelays[h].count);
         performanceHours.push(`${h}:00`);
         performanceValues.push(avgDelay);
-        
+
         // Colore basato sulla performance
         const severity = this.getDelaySeverity(avgDelay);
         performanceColors.push(
@@ -1099,11 +1104,11 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       this.hourlyPerformanceChartData = undefined;
       console.log('No performance data available');
     }
-    
+
     // 7. Distribuzione Asporto vs Tavolo
     this.takeAwayCount = 0;
     this.dineInCount = 0;
-    
+
     orders.forEach(order => {
       // Considera null come dine-in (consumazione al tavolo)
       if (order.takeAway === true) {
@@ -1132,16 +1137,16 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
     // 8. Categorie per Tipo Servizio (Stacked)
     const categoryServiceMap = new Map<string, { takeAway: number; dineIn: number }>();
-    
+
     orders.forEach(order => {
       const categoryId = order.menuItem?.categoryId;
       const category = categoryId ? this._categoriesMap.get(categoryId) : undefined;
       const categoryName = category?.name || 'Senza Categoria';
-      
+
       if (!categoryServiceMap.has(categoryName)) {
         categoryServiceMap.set(categoryName, { takeAway: 0, dineIn: 0 });
       }
-      
+
       const stats = categoryServiceMap.get(categoryName)!;
       if (order.takeAway === true) {
         stats.takeAway++;
@@ -1177,7 +1182,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
     // 9. Top Stazioni di Lavoro
     const stationCount = new Map<string, number>();
-    
+
     orders.forEach(order => {
       const stationName = order.plate?.name || 'Sconosciuta';
       stationCount.set(stationName, (stationCount.get(stationName) || 0) + 1);
@@ -1191,7 +1196,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
       const stationColors = sortedStations.map(([_, count], index) => {
         // Usa i colori delle stazioni se disponibili, altrimenti colori default
-        const colorPalette = ['#2196f3', '#ff9800', '#4caf50', '#f44336', '#9c27b0', 
+        const colorPalette = ['#2196f3', '#ff9800', '#4caf50', '#f44336', '#9c27b0',
                               '#00bcd4', '#ffeb3b', '#795548', '#607d8b', '#e91e63'];
         return colorPalette[index % colorPalette.length];
       });
@@ -1208,7 +1213,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     } else {
       this.topStationsChartData = undefined;
     }
-    
+
     console.log('Analysis complete. Charts state:', {
       topProducts: !!this.topProductsChartData,
       hourlyOrders: !!this.hourlyOrdersChartData,
@@ -1226,7 +1231,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
     this.showEmpty = false;
     this.selectedStats = undefined;
     this.statsData = undefined;
-    
+
     // Carica statistiche aggregate
     this._subscriptions.add(
       this._statsService.getStats(StatsService.getDateFormatted(this.dateFrom),
@@ -1239,7 +1244,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
             this.showEmpty = true;
           }
           this.statsLoading = false;
-          
+
           // Carica anche le analisi ordini avanzate per lo stesso periodo
           this.loadOrderAnalysis(this.dateFrom, this.dateTo);
         }, error: () => {
@@ -1292,7 +1297,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       // Logo (se disponibile)
       const logoImg = new Image();
       logoImg.src = 'assets/img/logo_feston.png';
-      
+
       logoImg.onload = () => {
         const logoWidth = 60;
         const logoHeight = (logoImg.height * logoWidth) / logoImg.width;
@@ -1303,7 +1308,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       logoImg.onerror = () => {
         console.log('Logo non disponibile, skip');
       };
-      
+
       // Continua senza aspettare il caricamento del logo
       yPosition += 10;
 
@@ -1325,13 +1330,13 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       pdf.setDrawColor(33, 150, 243);
       pdf.setLineWidth(0.5);
       pdf.roundedRect(margin + 10, yPosition, pageWidth - 2 * margin - 20, 25, 3, 3);
-      
+
       yPosition += 8;
       pdf.setFontSize(10);
       pdf.setTextColor(60, 60, 60);
       pdf.text('Periodo Analizzato:', pageWidth / 2, yPosition, { align: 'center' });
       yPosition += 7;
-      
+
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(0, 0, 0);
@@ -1350,7 +1355,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(60, 60, 60);
-      
+
       const totalOrders = this.takeAwayCount + this.dineInCount;
       const kpiData = [
         { label: 'Ordini Totali', value: totalOrders.toString(), icon: '' },
@@ -1373,12 +1378,12 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
         pdf.setFillColor(245, 245, 245);
         pdf.roundedRect(kpiX, kpiY, kpiBoxWidth, kpiBoxHeight, 2, 2, 'F');
-        
+
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(33, 150, 243);
         pdf.text(`${kpi.icon} ${kpi.label}`, kpiX + 3, kpiY + 7);
-        
+
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(11);
         pdf.setTextColor(0, 0, 0);
@@ -1412,7 +1417,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
       for (const chart of chartSelectors) {
         const chartElement = document.querySelector(`${chart.selector} .chart-content`) as HTMLElement;
-        
+
         if (!chartElement || chartElement.offsetHeight === 0) {
           console.log(`Grafico ${chart.title} non trovato o vuoto, skip`);
           continue;
@@ -1443,7 +1448,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         const imgData = canvas.toDataURL('image/jpeg', 0.92); // JPEG con qualità 92%
         const imgWidth = pageWidth - (2 * margin);
         const imgHeight = Math.min((canvas.height * imgWidth) / canvas.width, 110); // Max 110mm per grafico
-        
+
         pdf.addImage(imgData, 'JPEG', margin, yPosition, imgWidth, imgHeight);
         yPosition += imgHeight + 10;
         chartsPerPage++;
@@ -1456,7 +1461,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
         pdf.setFontSize(8);
         pdf.setFont('helvetica', 'italic');
         pdf.setTextColor(150, 150, 150);
-        
+
         if (i > 1) { // Skip footer sulla copertina
           pdf.text(
             `Pagina ${i - 1} di ${totalPages - 1}`,

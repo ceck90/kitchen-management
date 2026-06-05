@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { PlatePair, PlatePairsService } from '../services/plate-pairs.service';
@@ -39,7 +40,8 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
     public plateQueueManagerService: PlateQueueManagerService,
     private _webSocketService: WebSocketService,
     private _messageService: MessageService,
-    private _plateMenuItemsService: PlateMenuItemsService
+    private _plateMenuItemsService: PlateMenuItemsService,
+    private _titleService: Title
   ) {
     this._pkmiNotification$ = this._webSocketService.pkmiNotifications$;
   }
@@ -67,6 +69,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._subs.unsubscribe();
+    this._titleService.setTitle('Kitchen Management');
   }
 
   private _loadPair(): void {
@@ -85,6 +88,14 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
     let plate1Loaded = false;
     let plate2Loaded = false;
 
+    const updateTitle = () => {
+      if (this.pair?.name) {
+        this._titleService.setTitle(this.pair.name);
+      } else if (this.plate1Config?.name && this.plate2Config?.name) {
+        this._titleService.setTitle(`${this.plate1Config.name} / ${this.plate2Config.name}`);
+      }
+    };
+
     // Load both plates configuration
     this._subs.add(
       this._plateService.getById(plateId1).subscribe(
@@ -93,6 +104,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
           plate1Loaded = true;
           if (plate2Loaded) {
             this._loadQueues();
+            updateTitle();
           }
         }
       )
@@ -105,6 +117,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
           plate2Loaded = true;
           if (plate1Loaded) {
             this._loadQueues();
+            updateTitle();
           }
         }
       )
