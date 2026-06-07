@@ -199,10 +199,13 @@
       text-align: left;
     }
 
-    // Icona asporto in alto a destra
+    // Icona asporto in alto a destra, spostata a sinistra per non sovrapporsi al badge del ritardo
+    // Il badge (font 18px + padding) è largo ~90px e posizionato a right:-12px, quindi
+    // il suo bordo sinistro è a ~78px dal bordo destro del container.
+    // Con right:96px l'icona ha ~18px di margine dal badge.
     .takeaway-icon {
       position: absolute;
-      right: $spacing-md;
+      right: 96px;
       top: $spacing-md;
       width: 48px;
       height: 48px;
@@ -229,8 +232,8 @@
     }
 
     .item-delay-badge {
-      top: -12px;
-      right: -12px;
+      top: $spacing-xs;
+      right: $spacing-xs;
       
       ::ng-deep .p-tag {
         font-size: 18px;
