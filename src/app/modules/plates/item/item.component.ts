@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, NgModule, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, NgModule, OnDestroy, OnInit, Output} from '@angular/core';
 import {ItemEvent, Plate, PlateMenuItemAction, PlateItemStatus} from "../plate.interface";
 import {PlateMenuItem, Status} from "../../plate-menu-items/plate-menu-item";
 import {MenuItem as PrimeMenuItem} from 'primeng/api';
@@ -15,7 +15,7 @@ import {I18nService} from "../../../services/i18n.service";
   templateUrl: './item.component.html',
   styleUrls: ['./item.component.scss']
 })
-export class ItemComponent implements OnInit {
+export class ItemComponent implements OnInit, OnDestroy {
 
   @Input() public config!: PlateMenuItem;
   @Input() public plateList: Plate[] = [];
@@ -35,6 +35,8 @@ export class ItemComponent implements OnInit {
   public delaySeverity: 'success' | 'warning' | 'danger' = 'success';
   public readonly i18n: any;
 
+  private _delayUpdateInterval: any;
+
   constructor(private _delayThresholdsService: DelayThresholdsService,
               public i18nService: I18nService) {
     this.i18n = i18nService.instance;
@@ -42,6 +44,9 @@ export class ItemComponent implements OnInit {
 
   public ngOnInit(): void {
     this.calculateItemDelay();
+    this._delayUpdateInterval = setInterval(() => {
+      this.calculateItemDelay();
+    }, 60000);
     this.deleteOptions = [
       {
         icon: 'pi pi-trash',
@@ -89,6 +94,12 @@ export class ItemComponent implements OnInit {
 
     this.onCancelEvent.emit(event);
     this.toggleOverlay();
+  }
+
+  public ngOnDestroy(): void {
+    if (this._delayUpdateInterval) {
+      clearInterval(this._delayUpdateInterval);
+    }
   }
 
   public toggleOverlay(): void {
