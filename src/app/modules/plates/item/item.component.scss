@@ -199,12 +199,11 @@
       text-align: left;
     }
 
-    // Icona asporto centrata orizzontalmente e verticalmente
+    // Icona asporto in alto a destra
     .takeaway-icon {
       position: absolute;
-      right: 50%;
-      transform: translateX(50%);
-      top: $spacing-lg;
+      right: $spacing-md;
+      top: $spacing-md;
       width: 48px;
       height: 48px;
       object-fit: contain;
