@@ -199,14 +199,13 @@
       text-align: left;
     }
 
-    // Icona asporto in alto a destra, spostata a sinistra per non sovrapporsi al badge del ritardo
-    // Il badge (font 18px + padding) è largo ~90px e posizionato a right:-12px, quindi
-    // il suo bordo sinistro è a ~78px dal bordo destro del container.
-    // Con right:96px l'icona ha ~18px di margine dal badge.
+    // Icona asporto in basso a sinistra, simmetrica rispetto ai pulsanti quick move / done
     .takeaway-icon {
       position: absolute;
-      right: 96px;
-      top: $spacing-md;
+      bottom: $spacing-md;
+      left: $spacing-md;
+      top: auto;
+      right: auto;
       width: 48px;
       height: 48px;
       object-fit: contain;
