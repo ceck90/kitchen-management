@@ -2,6 +2,7 @@ import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {ApiResourceEnum} from './api-resource.enum';
+import {runtimeConfig} from '../../../services/runtime-config';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +16,10 @@ export class RequestService {
   }
 
   static get baseUrl(): string {
-    const hostname: string = environment.api.protocol + '://' + environment.api.hostname;
-    const port: string = environment.api.port ? `:${environment.api.port}` : '';
-    const context: string = environment.api.context ? `/${environment.api.context}` : '';
+    const api = runtimeConfig.api || environment.api;
+    const hostname: string = api.protocol + '://' + api.hostname;
+    const port: string = api.port ? `:${api.port}` : '';
+    const context: string = api.context ? `/${api.context}` : '';
 
     return hostname + port + context;
   }

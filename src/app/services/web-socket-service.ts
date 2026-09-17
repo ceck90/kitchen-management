@@ -4,14 +4,15 @@ import * as SockJS from 'sockjs-client';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {PKMINotification, PKMINotificationType} from "./pkmi-notification";
+import {runtimeConfig} from './runtime-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
-  webSocketEndPoint: string = environment.webSocket.endpoint;
-  greetingsTopic: string = environment.webSocket.defaultTopic;
-  pkmiTopic: string = environment.webSocket.pkmiTopic;
+  webSocketEndPoint: string = runtimeConfig.webSocket?.endpoint || environment.webSocket.endpoint;
+  greetingsTopic: string = runtimeConfig.webSocket?.defaultTopic || environment.webSocket.defaultTopic;
+  pkmiTopic: string = runtimeConfig.webSocket?.pkmiTopic || environment.webSocket.pkmiTopic;
   stompClient: any;
   interval: any;
 

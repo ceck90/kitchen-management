@@ -1,0 +1,20 @@
+services:
+  kitchen-management:
+    image: kitchen-management:1.0.0
+    env_file:
+      - ${KITCHEN_MANAGEMENT_ENV_FILE:-./config/kitchen-management.env}
+    ports:
+      - "${KITCHEN_MANAGEMENT_PORT:-8080}:8080"
+    volumes:
+      - kitchen-management-config:/var/lib/kitchen-management
+    networks:
+      - musicfest-shared
+    restart: unless-stopped
+
+volumes:
+  kitchen-management-config:
+    external: true
+
+networks:
+  musicfest-shared:
+    external: true

@@ -1,0 +1,16 @@
+services:
+  kitchen-management:
+    image: kitchen-management:1.0.0
+    build:
+      context: .
+    env_file:
+      - ${KITCHEN_MANAGEMENT_ENV_FILE:-./config/kitchen-management.env}
+    ports:
+      - "${KITCHEN_MANAGEMENT_PORT:-8080}:8080"
+    volumes:
+      - kitchen-management-config:/var/lib/kitchen-management
+    restart: unless-stopped
+
+volumes:
+  kitchen-management-config:
+    external: true
