@@ -371,12 +371,41 @@ body {
       }
     }
 
+    // Outlined buttons: same size and radius as the filled ones, border and text
+    // take the severity color (neutral by default)
     &.p-button-outlined {
+      --outlined-color: #{$primary-600};
       background: transparent;
+      border: 2px solid var(--outlined-color);
+      color: var(--outlined-color);
+      box-shadow: none;
       transition: $transition-base;
 
-      &:hover {
-        background: rgba(59, 130, 246, 0.1);
+      &:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--outlined-color) 10%, transparent);
+      }
+
+      &.p-button-success {
+        --outlined-color: #{$success-600};
+      }
+
+      &.p-button-danger {
+        --outlined-color: #ef4444;
+      }
+
+      &.p-button-warning {
+        --outlined-color: #d97706;
+      }
+    }
+
+    // Warning (filled)
+    &.p-button-warning:not(.p-button-text):not(.p-button-outlined) {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        transform: translateY(-1px);
       }
     }
 
