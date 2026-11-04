@@ -31,4 +31,4 @@ ENV NGINX_PORT=8080 \
 VOLUME ["/var/lib/kitchen-management"]
 EXPOSE 8080
 ENTRYPOINT ["/usr/local/bin/kitchen-management-entrypoint"]
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-e", "stderr", "-g", "daemon off;"]
