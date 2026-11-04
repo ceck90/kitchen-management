@@ -70,13 +70,13 @@
     </div>
 
     <div class="toolbar-center">
-      <span class="p-input-icon-left search-input">
-        <i class="pi pi-search"></i>
+      <p-iconfield class="search-input">
+        <p-inputicon class="pi pi-search" />
         <input pInputText
           type="text"
           (input)="filterGlobal($event)"
           [placeholder]="i18n.ORDERS.SEARCH_PLACEHOLDER" />
-      </span>
+      </p-iconfield>
     </div>
 
     <div class="toolbar-right">

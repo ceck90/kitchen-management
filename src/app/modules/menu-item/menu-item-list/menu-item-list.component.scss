@@ -26,7 +26,7 @@
   padding-bottom: 1rem;
   border-bottom: 2px solid #f3f4f6;
 
-  .p-input-icon-left {
+  p-iconfield {
     flex: 1;
 
     input {
@@ -42,8 +42,7 @@
       }
     }
 
-    i {
-      left: 0.875rem;
+    .p-inputicon {
       color: var(--theme-text-secondary);
     }
   }

@@ -7,6 +7,8 @@ import {PlateMenuItemNewComponent} from './plate-menu-items-new/plate-menu-item-
 
 import {TableModule} from 'primeng/table';
 import {InputTextModule} from "primeng/inputtext";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {SharedModule} from "../shared/shared.module";
 import {DatePickerModule} from "primeng/datepicker";
 import {SelectModule} from "primeng/select";
@@ -34,6 +36,8 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     TableModule,
     InputTextModule,
+    IconFieldModule,
+    InputIconModule,
     SharedModule,
     PlateMenuItemsRoutingModule,
     DatePickerModule,

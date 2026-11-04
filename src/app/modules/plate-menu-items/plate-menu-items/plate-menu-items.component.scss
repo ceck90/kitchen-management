@@ -164,8 +164,7 @@
         }
       }
 
-      i {
-        left: 0.875rem;
+      .p-inputicon {
         color: #9ca3af;
       }
     }
@@ -473,7 +472,7 @@
           }
         }
 
-        .p-input-icon-left input {
+        p-iconfield input {
           font-size: 0.85rem;
           padding: 0.4rem 0.4rem 0.4rem 2rem;
         }
@@ -602,7 +601,7 @@
           padding: 0.4rem 0.75rem;
         }
 
-        .p-input-icon-left {
+        p-iconfield {
           width: 100%;
 
           input {

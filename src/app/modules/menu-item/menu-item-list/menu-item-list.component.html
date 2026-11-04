@@ -1,13 +1,13 @@
 <div class="menu-items-container">
   <div class="search-bar">
-    <span class="p-input-icon-left">
-      <i class="pi pi-search"></i>
+    <p-iconfield>
+      <p-inputicon class="pi pi-search" />
       <input type="text"
         pInputText
         [placeholder]="i18n.ITEM.SEARCH_PLACEHOLDER"
         [(ngModel)]="searchText"
         (input)="onSearch()">
-    </span>
+    </p-iconfield>
     <div class="items-count">
       <i class="pi pi-shopping-bag"></i>
       <span>{{filteredItems.length}} {{i18n.ITEM.PRODUCTS_COUNT}}</span>

@@ -7,6 +7,8 @@ import {MenuItemListComponent} from './menu-item-list/menu-item-list.component';
 import {TableModule} from 'primeng/table';
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
+import {IconFieldModule} from "primeng/iconfield";
+import {InputIconModule} from "primeng/inputicon";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
@@ -37,6 +39,8 @@ const routes: Routes = [
     TableModule,
     DialogModule,
     InputTextModule,
+    IconFieldModule,
+    InputIconModule,
     ReactiveFormsModule,
     ButtonModule,
     RippleModule,
