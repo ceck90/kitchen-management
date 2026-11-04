@@ -1,5 +1,6 @@
 <div class="item_container"
   [class.expanded]="readonly"
+  [class.grouped]="isGroup"
   [class.delay-warning]="delaySeverity === 'warning'"
   [class.delay-danger]="delaySeverity === 'danger'">
   @if (delayMinutes > 0 && showDelay) {

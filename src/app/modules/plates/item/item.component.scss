@@ -389,28 +389,58 @@
   }
 }
 
-// Tile raggruppata: tutte le righe dello stesso ordine
-.item_group {
+// ========================================
+// TILE RAGGRUPPATA (tutte le righe dello stesso ordine)
+// ========================================
+.item_container .item_group {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  font-weight: 600;
+  gap: 2px;
+  min-width: 0;
+  color: #1f2937 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 
   .item_group_line {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.35rem;
+    gap: 0.4em;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.25;
   }
 
   .item_group_qty {
     font-variant-numeric: tabular-nums;
-    opacity: 0.8;
+    color: #4b5563;
+    font-weight: 700;
   }
 
   .item_group_notes {
-    font-weight: 400;
     font-size: 0.8em;
-    opacity: 0.75;
+    font-weight: 600;
+    text-transform: none;
+    color: #4b5563;
+  }
+}
+
+// Vista espansa: la tile cresce con le righe (altezza minima come le altre) e lascia spazio in basso
+// all'icona asporto e ai pulsanti, che sono posizionati in assoluto
+.item_container.expanded.grouped {
+  height: auto;
+  min-height: 165px;
+  padding-bottom: 80px;
+
+  .item_group {
+    gap: 4px;
+
+    .item_group_line {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
   }
 }
