@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AppSettingsService } from './app-settings.service';
 
 export interface DelayThresholds {
   warning: number;  // Soglia gialla (minuti)
@@ -9,7 +10,6 @@ export interface DelayThresholds {
   providedIn: 'root'
 })
 export class DelayThresholdsService {
-  private readonly STORAGE_KEY = 'delay_thresholds';
   private readonly DEFAULT_THRESHOLDS: DelayThresholds = {
     warning: 10,
     danger: 20
@@ -17,8 +17,8 @@ export class DelayThresholdsService {
 
   private _thresholds: DelayThresholds;
 
-  constructor() {
-    this._thresholds = this._loadFromStorage();
+  constructor(private _appSettings: AppSettingsService) {
+    this._thresholds = this._load();
   }
 
   getThresholds(): DelayThresholds {
@@ -27,7 +27,7 @@ export class DelayThresholdsService {
 
   setThresholds(thresholds: DelayThresholds): void {
     this._thresholds = { ...thresholds };
-    this._saveToStorage();
+    this._save();
   }
 
   getSeverity(delayMinutes: number): 'success' | 'warning' | 'danger' {
@@ -40,24 +40,17 @@ export class DelayThresholdsService {
     }
   }
 
-  private _loadFromStorage(): DelayThresholds {
-    const saved = localStorage.getItem(this.STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Error parsing delay thresholds from localStorage', e);
-      }
-    }
-    return { ...this.DEFAULT_THRESHOLDS };
+  private _load(): DelayThresholds {
+    const saved = this._appSettings.settings.delayThresholds;
+    return saved ? { ...saved } : { ...this.DEFAULT_THRESHOLDS };
   }
 
-  private _saveToStorage(): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._thresholds));
+  private _save(): void {
+    this._appSettings.update({ delayThresholds: { ...this._thresholds } });
   }
 
   resetToDefaults(): void {
     this._thresholds = { ...this.DEFAULT_THRESHOLDS };
-    this._saveToStorage();
+    this._save();
   }
 }
