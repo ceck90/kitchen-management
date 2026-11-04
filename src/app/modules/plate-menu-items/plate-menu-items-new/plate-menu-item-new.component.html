@@ -157,7 +157,6 @@
               [label]="i18n.ORDERS.NEW_ORDER_PAGE.ASSIGN_PLATE"
               icon="pi pi-inbox"
               [model]="platesAction"
-              styleClass="p-button-info"
               [disabled]="!selectedPlateMenuItems || !selectedPlateMenuItems.length">
             </p-split-button>
           </div>
@@ -284,7 +283,7 @@
                     pInitEditableRow
                     icon="pi pi-pencil"
                     (click)="onRowEditInit(plateMenuItem)"
-                    styleClass="p-button-rounded p-button-text p-button-info"
+                    styleClass="p-button-rounded p-button-text"
                     [pTooltip]="i18n.COMMON.EDIT"
                     tooltipPosition="top">
                   </p-button>
