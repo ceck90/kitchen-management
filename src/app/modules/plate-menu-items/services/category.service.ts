@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {RequestService} from "../../shared/service/request.service";
 import {CRUDService} from "../../shared/interface/crud-service.interface";
 import {Category, MenuItem} from "../plate-menu-item";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {ApiResourceEnum} from "../../shared/service/api-resource.enum";
 import {map, Observable} from "rxjs";
 

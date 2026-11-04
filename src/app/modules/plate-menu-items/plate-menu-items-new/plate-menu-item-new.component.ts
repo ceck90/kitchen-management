@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {PlateMenuItemsService} from "../../shared/service/plate-menu-items.service";
 import {MenuItemsService} from "../services/menu-items.service";
 import {MessageService, TreeNode} from "primeng/api";
@@ -12,17 +12,19 @@ import {Plate} from "../../plates/plate.interface";
 import {CategoryService} from "../services/category.service";
 import {PlateService} from "../../plates/services/plate.service";
 import {Error} from "../../shared/interface/error.interface";
-import {HttpErrorResponse} from "@angular/common/http";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
-  selector: 'plate-menu-items-new',
-  templateUrl: './plate-menu-item-new.component.html',
-  styleUrls: ['./plate-menu-item-new.component.scss']
+    selector: 'plate-menu-items-new',
+    templateUrl: './plate-menu-item-new.component.html',
+    styleUrls: ['./plate-menu-item-new.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlateMenuItemNewComponent implements OnInit, OnDestroy {
 
   public readonly i18n: any;
-  public form: FormGroup | undefined;
+  public form: UntypedFormGroup | undefined;
   public menuItemsOptions: TreeNode[] = [];
   public menuItems: MenuItemExtended[] = [];
   public categories: Category[] = [];
@@ -56,11 +58,11 @@ export class PlateMenuItemNewComponent implements OnInit, OnDestroy {
       {label: 'Done', value: Status.Done},
       {label: 'Cancelled', value: Status.Cancelled}
     ];
-    this.form = new FormGroup({
-      orderNumber: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      menuItem: new FormControl("", Validators.required),
-      tableNumber: new FormControl("", Validators.required),
-      clientName: new FormControl("", Validators.required)
+    this.form = new UntypedFormGroup({
+      orderNumber: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
+      menuItem: new UntypedFormControl("", Validators.required),
+      tableNumber: new UntypedFormControl("", Validators.required),
+      clientName: new UntypedFormControl("", Validators.required)
     });
   }
 

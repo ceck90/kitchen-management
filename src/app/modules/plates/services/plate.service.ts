@@ -4,7 +4,7 @@ import {CRUDService} from "../../shared/interface/crud-service.interface";
 import {ApiResourceEnum} from "../../shared/service/api-resource.enum";
 import {BehaviorSubject, map, Observable} from "rxjs";
 import {Plate, PlateInterface} from "../plate.interface";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {I18nService} from "../../../services/i18n.service";
 import {PlateMenuItem} from "../../plate-menu-items/plate-menu-item";
 

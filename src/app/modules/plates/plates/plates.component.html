@@ -9,95 +9,109 @@
       <p class="header-subtitle">{{i18n.PLATE.SUBTITLE}}</p>
     </div>
   </div>
-  
-  <div class="header-actions" *ngIf="!loading">
-    <button pButton 
-            pRipple
-            [label]="i18n.PLATE.PAIRS_BUTTON"
-            icon="pi pi-link"
-            class="p-button-secondary"
-            routerLink="/plates/pairs-config">
-    </button>
-    <button pButton 
-            pRipple
-            [label]="i18n.PLATE.UNASSIGNED_ORDERS + (unassignedItems.length > 0 ? ' (' + unassignedItems.length + ')' : '')"
-            [icon]="showOverlay ? 'pi pi-times' : 'pi pi-list'"
-            [class]="showOverlay ? 'p-button-danger' : 'p-button-info'"
-            (click)="toggleNoQueuedItemsOverlay()">
-    </button>
-    <ng-container *ngIf="showOverlay" [ngTemplateOutlet]="overlay"></ng-container>
-    <ng-container *ngIf="showPlateList" [ngTemplateOutlet]="plate_overlay"></ng-container>
-  </div>
+
+  @if (!loading) {
+    <div class="header-actions">
+      <p-button
+        [label]="i18n.PLATE.PAIRS_BUTTON"
+        icon="pi pi-link"
+        styleClass="p-button-secondary"
+        routerLink="/plates/pairs-config">
+      </p-button>
+      <p-button
+        [label]="i18n.PLATE.UNASSIGNED_ORDERS + (unassignedItems.length > 0 ? ' (' + unassignedItems.length + ')' : '')"
+        [icon]="showOverlay ? 'pi pi-times' : 'pi pi-list'"
+        [class]="showOverlay ? 'p-button-danger' : 'p-button-info'"
+        (click)="toggleNoQueuedItemsOverlay()">
+      </p-button>
+      @if (showOverlay) {
+        <ng-container [ngTemplateOutlet]="overlay"></ng-container>
+      }
+      @if (showPlateList) {
+        <ng-container [ngTemplateOutlet]="plate_overlay"></ng-container>
+      }
+    </div>
+  }
 </div>
 <!-- Modern Plates Carousel -->
 <div class="modern-carousel-container">
   <!-- Previous Button -->
-  <button pButton
-          pRipple
-          class="carousel-nav-button carousel-nav-previous"
-          icon="pi pi-chevron-left"
-          (click)="onPreviousPage()"
-          (mouseenter)="hidePrevious = false"
-          (mouseleave)="hidePrevious = true"
-          [style.opacity]="hidePrevious ? '0' : '1'"
-          *ngIf="currentPage !== 0">
-  </button>
+  @if (currentPage !== 0) {
+    <p-button
+      styleClass="carousel-nav-button carousel-nav-previous"
+      icon="pi pi-chevron-left"
+      (click)="onPreviousPage()"
+      (mouseenter)="hidePrevious = false"
+      (mouseleave)="hidePrevious = true"
+      [style.opacity]="hidePrevious ? '0' : '1'"
+      >
+    </p-button>
+  }
 
   <!-- Plates Carousel -->
   <div class="plates-carousel">
-    <div class="carousel-loading" *ngIf="loading">
-      <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
-      <p>{{i18n.PLATE.LOADING_PLATES}}</p>
-    </div>
-    
-    <ng-container *ngIf="!loading">
-      <ng-container *ngFor="let plate of plateList.slice(currentPage * DISPLAY_CHUNK,
-                                                       currentPage * DISPLAY_CHUNK + DISPLAY_CHUNK)">
+    @if (loading) {
+      <div class="carousel-loading">
+        <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+        <p>{{i18n.PLATE.LOADING_PLATES}}</p>
+      </div>
+    }
+
+    @if (!loading) {
+      @for (plate of plateList.slice(currentPage * DISPLAY_CHUNK,
+        currentPage * DISPLAY_CHUNK + DISPLAY_CHUNK); track plate) {
         <plate (onNew)="onNewPlate($event)"
-               (onItemEvent)="handleItemEvent($event)"
-               (viewModeChange)="onPlateViewModeChange($event, plate)"
-               [config]="plate"
-               [plateList]="getEnabledPlateList(plate)"
-               [queue]="plateQueueManagerService.getQueue(plate.id!)"
-               [showItemDelays]="showItemDelays">
+          (onItemEvent)="handleItemEvent($event)"
+          (viewModeChange)="onPlateViewModeChange($event, plate)"
+          [config]="plate"
+          [plateList]="getEnabledPlateList(plate)"
+          [queue]="plateQueueManagerService.getQueue(plate.id!)"
+          [showItemDelays]="showItemDelays">
         </plate>
-      </ng-container>
-    </ng-container>
+      }
+    }
   </div>
 
   <!-- Next Button -->
-  <button pButton
-          pRipple
-          class="carousel-nav-button carousel-nav-next"
-          icon="pi pi-chevron-right"
-          (click)="onNextPage()"
-          (mouseenter)="hideNext = false"
-          (mouseleave)="hideNext = true"
-          [style.opacity]="hideNext ? '0' : '1'"
-          *ngIf="(currentPage + 1) !== totalPages">
-  </button>
+  @if ((currentPage + 1) !== totalPages) {
+    <p-button
+      styleClass="carousel-nav-button carousel-nav-next"
+      icon="pi pi-chevron-right"
+      (click)="onNextPage()"
+      (mouseenter)="hideNext = false"
+      (mouseleave)="hideNext = true"
+      [style.opacity]="hideNext ? '0' : '1'"
+      >
+    </p-button>
+  }
 </div>
 
 <!-- Modern Pagination Dots -->
-<div class="carousel-pagination" *ngIf="totalPages > 1">
-  <button *ngFor="let p of pages" 
-          class="pagination-dot" 
-          [class.active]="p == currentPage"
-          (click)="currentPage = p">
-  </button>
-</div>
+@if (totalPages > 1) {
+  <div class="carousel-pagination">
+    @for (p of pages; track p) {
+      <button
+        class="pagination-dot"
+        [class.active]="p == currentPage"
+        (click)="currentPage = p">
+      </button>
+    }
+  </div>
+}
 
 <ng-template #overlay>
   <items-overlay (onRun)="onUnassignedSelected($event)"
-                 [hideCloseButton]="true"
-                 [items]="unassignedItems">
+    [hideCloseButton]="true"
+    [items]="unassignedItems">
   </items-overlay>
 </ng-template>
 <ng-template #plate_overlay>
   <div class="plates-options__container">
+    @for (p of getEnabledPlateList(null); track p) {
       <span (click)="onUnassignedExecuteRun(p)"
-            *ngFor="let p of getEnabledPlateList(null)">
+        >
         <label>{{p.name}}</label>
       </span>
+    }
   </div>
 </ng-template>

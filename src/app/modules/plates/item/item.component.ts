@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, NgModule, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, NgModule, OnDestroy, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {ItemEvent, Plate, PlateMenuItemAction, PlateItemStatus} from "../plate.interface";
 import {PlateMenuItem, Status} from "../../plate-menu-items/plate-menu-item";
 import {MenuItem as PrimeMenuItem} from 'primeng/api';
@@ -11,9 +11,11 @@ import {DelayThresholdsService} from "../../../services/delay-thresholds.service
 import {I18nService} from "../../../services/i18n.service";
 
 @Component({
-  selector: 'item',
-  templateUrl: './item.component.html',
-  styleUrls: ['./item.component.scss']
+    selector: 'item',
+    templateUrl: './item.component.html',
+    styleUrls: ['./item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ItemComponent implements OnInit, OnDestroy {
 

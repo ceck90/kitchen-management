@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {ActivatedRoute} from "@angular/router";
 import {config, Observable, Subscription} from "rxjs";
@@ -12,8 +12,8 @@ import {MessageService} from "primeng/api";
 import {PlateQueueManagerService} from "../services/plate-queue-manager.service";
 
 @Component({
-  selector: 'page',
-  template: `
+    selector: 'page',
+    template: `
     <p-toast></p-toast>
     <div class="page-container">
       <plate [config]="config" 
@@ -24,7 +24,7 @@ import {PlateQueueManagerService} from "../services/plate-queue-manager.service"
              (onItemEvent)="handleItemEvent($event)"></plate>
     </div>
   `,
-  styles: [`
+    styles: [`
     .page-container {
       // reset default height with full page mode component
       height: 100vh !important;
@@ -82,7 +82,9 @@ import {PlateQueueManagerService} from "../services/plate-queue-manager.service"
         }
       }
     }
-  `]
+  `],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlatePageComponent implements OnInit, OnDestroy {
 

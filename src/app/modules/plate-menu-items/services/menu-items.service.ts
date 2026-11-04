@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {map, Observable} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {ApiResourceEnum} from "../../shared/service/api-resource.enum";
 import {RequestService} from "../../shared/service/request.service";
 import {CRUDService} from "../../shared/interface/crud-service.interface";

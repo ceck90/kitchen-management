@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {Plate} from "../../../plates/plate.interface";
 
 @Component({
-  selector: 'plate-info',
-  template: `
+    selector: 'plate-info',
+    template: `
     <div class="plate-card" [class.disabled]="!config.enabled">
       <div class="plate-header" [style.background]="getHeaderGradient()">
         <div class="plate-icon" [style.backgroundColor]="config.color!">
@@ -11,46 +11,50 @@ import {Plate} from "../../../plates/plate.interface";
         </div>
         <div class="plate-info">
           <h4>{{config.name}}</h4>
-          <span class="plate-number" *ngIf="config.slot">#{{config.slot[1]}}</span>
+          @if (config.slot) {
+            <span class="plate-number">#{{config.slot[1]}}</span>
+          }
         </div>
         <div class="plate-status">
           <p-tag [severity]="config.enabled ? config._severity! : 'secondary'"
-                 [value]="!config.enabled ? 'SPENTO' : config._status!"></p-tag>
+          [value]="!config.enabled ? 'SPENTO' : config._status!"></p-tag>
         </div>
       </div>
-      
+    
       <div class="plate-actions">
-        <button pButton pRipple
-                type="button"
-                [icon]="config.enabled ? 'pi pi-power-off' : 'pi pi-check'"
-                [class]="config.enabled ? 'p-button-warning p-button-sm' : 'p-button-success p-button-sm'"
-                [label]="config.enabled ? 'Spegni' : 'Accendi'"
-                [pTooltip]="config.enabled ? 'Spegni la piastra' : 'Accendi la piastra'"
-                tooltipPosition="top"
-                (click)="onSwitchClick()">
-        </button>
-        <button pButton pRipple
-                type="button"
-                icon="pi pi-pencil"
-                class="p-button-info p-button-sm"
-                label="Modifica"
-                pTooltip="Modifica piastra"
-                tooltipPosition="top"
-                (click)="edit.emit(config.id)">
-        </button>
-        <button pButton pRipple
-                type="button"
-                icon="pi pi-trash"
-                class="p-button-danger p-button-sm"
-                label="Elimina"
-                pTooltip="Elimina piastra"
-                tooltipPosition="top"
-                (click)="delete.emit(config.id)">
-        </button>
+        <p-button
+          type="button"
+          [icon]="config.enabled ? 'pi pi-power-off' : 'pi pi-check'"
+          [class]="config.enabled ? 'p-button-warning p-button-sm' : 'p-button-success p-button-sm'"
+          [label]="config.enabled ? 'Spegni' : 'Accendi'"
+          [pTooltip]="config.enabled ? 'Spegni la piastra' : 'Accendi la piastra'"
+          tooltipPosition="top"
+          (click)="onSwitchClick()">
+        </p-button>
+        <p-button
+          type="button"
+          icon="pi pi-pencil"
+          styleClass="p-button-info p-button-sm"
+          label="Modifica"
+          pTooltip="Modifica piastra"
+          tooltipPosition="top"
+          (click)="edit.emit(config.id)">
+        </p-button>
+        <p-button
+          type="button"
+          icon="pi pi-trash"
+          styleClass="p-button-danger p-button-sm"
+          label="Elimina"
+          pTooltip="Elimina piastra"
+          tooltipPosition="top"
+          (click)="delete.emit(config.id)">
+        </p-button>
       </div>
     </div>
-  `,
-  styleUrls: ['./plate-info.component.scss']
+    `,
+    styleUrls: ['./plate-info.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlateInfoComponent implements OnChanges {
 

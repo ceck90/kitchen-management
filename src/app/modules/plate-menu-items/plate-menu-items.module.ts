@@ -8,8 +8,8 @@ import {PlateMenuItemNewComponent} from './plate-menu-items-new/plate-menu-item-
 import {TableModule} from 'primeng/table';
 import {InputTextModule} from "primeng/inputtext";
 import {SharedModule} from "../shared/shared.module";
-import {CalendarModule} from "primeng/calendar";
-import {DropdownModule} from "primeng/dropdown";
+import {DatePickerModule} from "primeng/datepicker";
+import {SelectModule} from "primeng/select";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TreeSelectModule} from "primeng/treeselect";
 import {InputNumberModule} from "primeng/inputnumber";
@@ -19,10 +19,10 @@ import {DialogModule} from "primeng/dialog";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {CardModule} from "primeng/card";
-import {TabViewModule} from "primeng/tabview";
+import {TabsModule} from "primeng/tabs";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {DragDropModule} from "primeng/dragdrop";
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
@@ -36,8 +36,8 @@ import { TooltipModule } from 'primeng/tooltip';
     InputTextModule,
     SharedModule,
     PlateMenuItemsRoutingModule,
-    CalendarModule,
-    DropdownModule,
+    DatePickerModule,
+    SelectModule,
     FormsModule,
     ReactiveFormsModule,
     TreeSelectModule,
@@ -47,10 +47,10 @@ import { TooltipModule } from 'primeng/tooltip';
     DialogModule,
     ConfirmDialogModule,
     CardModule,
-    TabViewModule,
+    TabsModule,
     SplitButtonModule,
     DragDropModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     TooltipModule,
     FormsModule
   ],

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { PlatePair, PlatePairsService } from '../services/plate-pairs.service';
 import { PlateService } from '../services/plate.service';
 import { Plate } from '../plate.interface';
@@ -7,9 +7,11 @@ import { MessageService } from 'primeng/api';
 import { I18nService } from '../../../services/i18n.service';
 
 @Component({
-  selector: 'app-plate-pairs-config',
-  templateUrl: './plate-pairs-config.component.html',
-  styleUrls: ['./plate-pairs-config.component.scss']
+    selector: 'app-plate-pairs-config',
+    templateUrl: './plate-pairs-config.component.html',
+    styleUrls: ['./plate-pairs-config.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlatePairsConfigComponent implements OnInit {
   public pairs: PlatePair[] = [];

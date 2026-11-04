@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, NgModule, Output} from '@angular/core';
+import {Component, EventEmitter, Input, NgModule, Output, ChangeDetectionStrategy} from '@angular/core';
 import {PlateMenuItem} from "../../plate-menu-items/plate-menu-item";
 import {I18nService} from "../../../services/i18n.service";
 import {CommonModule} from "@angular/common";
@@ -9,9 +9,11 @@ import {ItemEvent, Plate} from "../plate.interface";
 import {ItemOverlayRowComponentModule} from "../item-overlay-row/item-overlay-row.component";
 
 @Component({
-  selector: 'items-overlay',
-  templateUrl: './items-overlay.component.html',
-  styleUrls: ['./items-overlay.component.scss']
+    selector: 'items-overlay',
+    templateUrl: './items-overlay.component.html',
+    styleUrls: ['./items-overlay.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ItemsOverlayComponent {
 

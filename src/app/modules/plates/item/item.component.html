@@ -1,75 +1,83 @@
-<div class="item_container" 
-     [class.expanded]="readonly"
-     [class.delay-warning]="delaySeverity === 'warning'"
-     [class.delay-danger]="delaySeverity === 'danger'">
-  <p-tag *ngIf="delayMinutes > 0 && showDelay"
-         class="item-delay-badge"
-         [severity]="delaySeverity"
-         [value]="'⏱ ' + getDelayLabel()"
-         [pTooltip]="i18n.ITEM.IN_PROGRESS_SINCE + ' ' + getDelayLabel()"
-         tooltipPosition="top"></p-tag>
-  
+<div class="item_container"
+  [class.expanded]="readonly"
+  [class.delay-warning]="delaySeverity === 'warning'"
+  [class.delay-danger]="delaySeverity === 'danger'">
+  @if (delayMinutes > 0 && showDelay) {
+    <p-tag
+      class="item-delay-badge"
+      [severity]="delaySeverity === 'warning' ? 'warn' : delaySeverity"
+      [value]="'⏱ ' + getDelayLabel()"
+      [pTooltip]="i18n.ITEM.IN_PROGRESS_SINCE + ' ' + getDelayLabel()"
+    tooltipPosition="top"></p-tag>
+  }
+
   <!-- Icona asporto per vista espansa -->
-  <img src="assets/img/takeaway.png" 
-       *ngIf="config.takeAway && readonly" 
-       class="takeaway-icon"
-       [pTooltip]="i18n.ITEM.TAKEAWAY_ORDER"
-       tooltipPosition="top">
-  
+  @if (config.takeAway && readonly) {
+    <img src="assets/img/takeaway.png"
+      class="takeaway-icon"
+      [pTooltip]="i18n.ITEM.TAKEAWAY_ORDER"
+      tooltipPosition="top">
+  }
+
   <span class="item_title">
     {{config.menuItem.name}}
   </span>
-  <span class="item_order" *ngIf="!readonly">
-    #{{config.orderNumber}} - T: {{config.tableNumber}}
-  </span>
-  <span class="item_order_exp" *ngIf="readonly">
-    #{{config.orderNumber}} - T: {{config.tableNumber}}
-  </span>
+  @if (!readonly) {
+    <span class="item_order">
+      #{{config.orderNumber}} - T: {{config.tableNumber}}
+    </span>
+  }
+  @if (readonly) {
+    <span class="item_order_exp">
+      #{{config.orderNumber}} - T: {{config.tableNumber}}
+    </span>
+  }
   <span class="item_note">{{ getNotes(config) }}</span>
-  <span class="item_actions" *ngIf="!readonly">
-    <img src="assets/img/takeaway.png" 
-         *ngIf="config.takeAway" 
-         class="takeaway-icon"
-         [pTooltip]="i18n.ITEM.TAKEAWAY_ORDER"
-         tooltipPosition="top">
-    <button (click)="onDone()"
-            class="p-button-rounded p-button-text p-button-success"
-            icon="pi pi-check"
-            pButton
-            pRipple></button>
-    <button (click)="toggleOverlay()"
-            class="p-button-rounded p-button-text"
-            icon="pi pi-ellipsis-v"
-            pButton
-            pRipple></button>
-    <ng-container *ngIf="deleteOverlay" [ngTemplateOutlet]="overlay"></ng-container>
-  </span>
-  
+  @if (!readonly) {
+    <span class="item_actions">
+      @if (config.takeAway) {
+        <img src="assets/img/takeaway.png"
+          class="takeaway-icon"
+          [pTooltip]="i18n.ITEM.TAKEAWAY_ORDER"
+          tooltipPosition="top">
+      }
+      <p-button (click)="onDone()"
+        styleClass="p-button-rounded p-button-text p-button-success"
+        icon="pi pi-check"></p-button>
+      <p-button (click)="toggleOverlay()"
+        styleClass="p-button-rounded p-button-text"
+        icon="pi pi-ellipsis-v"></p-button>
+      @if (deleteOverlay) {
+        <ng-container [ngTemplateOutlet]="overlay"></ng-container>
+      }
+    </span>
+  }
+
   <!-- Pulsante spostamento rapido per vista espansa -->
-  <span class="item_quick_move" *ngIf="readonly && currentPlate?.quickMoveEnabled && currentPlate?.quickMoveTargetPlateId">
-    <button (click)="onQuickMove()"
-            class="p-button-rounded p-button-text p-button-warning quick-move-button"
-            icon="pi pi-arrow-right"
-            [pTooltip]="'Sposta in ' + getTargetPlateName()"
-            tooltipPosition="top"
-            pButton
-            pRipple></button>
-  </span>
+  @if (readonly && currentPlate?.quickMoveEnabled && currentPlate?.quickMoveTargetPlateId) {
+    <span class="item_quick_move">
+      <p-button (click)="onQuickMove()"
+        styleClass="p-button-rounded p-button-text p-button-warning quick-move-button"
+        icon="pi pi-arrow-right"
+        [pTooltip]="'Sposta in ' + getTargetPlateName()"
+        tooltipPosition="top"></p-button>
+    </span>
+  }
 
   <!-- Pulsante done per vista espansa -->
-  <span class="item_done_expanded" *ngIf="readonly && currentPlate?.expandedDoneButtonEnabled">
-    <button (click)="onDone()"
-            class="p-button-rounded p-button-text p-button-success"
-            icon="pi pi-check"
-            [pTooltip]="i18n.ITEM.DONE"
-            tooltipPosition="top"
-            pButton
-            pRipple></button>
-  </span>
+  @if (readonly && currentPlate?.expandedDoneButtonEnabled) {
+    <span class="item_done_expanded">
+      <p-button (click)="onDone()"
+        styleClass="p-button-rounded p-button-text p-button-success"
+        icon="pi pi-check"
+        [pTooltip]="i18n.ITEM.DONE"
+        tooltipPosition="top"></p-button>
+    </span>
+  }
 </div>
 <ng-template #overlay>
   <div class="delete-options__container">
-    <ng-container *ngIf="!showPlateList">
+    @if (!showPlateList) {
       <span class="info-option">
         <i class="pi pi-info-circle"></i>
         <div class="info-details">
@@ -79,15 +87,19 @@
           <div><strong>{{i18n.ITEM.ORDER}}:</strong> {{config.orderNumber}}</div>
         </div>
       </span>
-      <span (click)="opt.command!()" *ngFor="let opt of deleteOptions" class="action-option">
-        <i [class]="opt.icon"></i>
-        <label>{{opt.label}}</label>
-      </span>
-    </ng-container>
-    <ng-container *ngIf="showPlateList">
-      <span (click)="onPlateMoved(p)" *ngFor="let p of plateList" class="plate-option">
-        <label>{{p.name}}</label>
-      </span>
-    </ng-container>
+      @for (opt of deleteOptions; track opt) {
+        <span (click)="opt.command!({})" class="action-option">
+          <i [class]="opt.icon"></i>
+          <label>{{opt.label}}</label>
+        </span>
+      }
+    }
+    @if (showPlateList) {
+      @for (p of plateList; track p) {
+        <span (click)="onPlateMoved(p)" class="plate-option">
+          <label>{{p.name}}</label>
+        </span>
+      }
+    }
   </div>
 </ng-template>

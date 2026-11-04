@@ -10,17 +10,17 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {InputNumberModule} from "primeng/inputnumber";
 import {ColorPickerModule} from "primeng/colorpicker";
 import {ChartModule} from 'primeng/chart';
-import {CalendarModule} from 'primeng/calendar';
+import {DatePickerModule} from 'primeng/datepicker';
 import {ConfirmationService, MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 const routes: Routes = [
@@ -45,17 +45,17 @@ const routes: Routes = [
     InputNumberModule,
     ColorPickerModule,
     ChartModule,
-    CalendarModule,
+    DatePickerModule,
     FormsModule,
     ToastModule,
     ConfirmDialogModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     ButtonModule,
     TableModule,
     ProgressBarModule,
     TagModule,
     TooltipModule,
-    DropdownModule,
+    SelectModule,
     MultiSelectModule
   ],
   providers: [MessageService, ConfirmationService]

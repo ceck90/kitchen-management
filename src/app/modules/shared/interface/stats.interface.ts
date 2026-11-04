@@ -17,6 +17,6 @@ type StatusCount = {
 };
 
 type DataSet = {
-  data: string[] | number[];
+  data: number[];
   backgroundColor: string[]
 }

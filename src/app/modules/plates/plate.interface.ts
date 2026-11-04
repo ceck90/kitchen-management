@@ -34,7 +34,7 @@ export interface Plate {
   label?: string;
   slot?: [number, number];
   viewMode?: 'rows' | 'columns';
-  _severity?: string;
+  _severity?: 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast';
   _status?: string;
   quickMoveEnabled?: boolean;
   quickMoveTargetPlateId?: string;

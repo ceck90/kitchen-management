@@ -1,124 +1,147 @@
-<ng-container [ngSwitch]="config?.mode">
-  <section *ngSwitchCase="plateMode.Skeleton" class="skeleton">
-    <button (mouseenter)="onMouseEnter()"
-            (mouseleave)="onMouseLeave()"
-            (click)="loadForm()"
-            id="add-plate">
-      <i [class]="'pi ' + icon"></i>
-    </button>
-  </section>
-  <section *ngSwitchCase="plateMode.On" class="on">
-    <header [style.backgroundColor]="config.color!" [class.expanded]="!showExpand" [class.dark-bg]="isColorDark(config.color)">
-      <div class="header-content">
-        <h3>{{config.name}}<span *ngIf="!showExpand" class="item-count-badge">{{progressItems.length}}</span></h3>
-        <div class="header-badges">
-          <p-tag *ngIf="maxDelayMinutes > 0"
-                 [severity]="delaySeverity"
-                 [pTooltip]="getDelayTooltip()"
-                 tooltipPosition="bottom">
-            <i class="pi pi-clock delay-icon"></i>
-            <span>{{ getDelayLabel() }}</span>
-          </p-tag>
-          <p-tag [severity]="config._severity!"
-                 [value]="config._status!"
-                 [style.display]="'none'"></p-tag>
+
+@switch (config?.mode) {
+  @case (plateMode.Skeleton) {
+    <section class="skeleton">
+      <button (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()"
+        (click)="loadForm()"
+        id="add-plate">
+        <i [class]="'pi ' + icon"></i>
+      </button>
+    </section>
+  }
+  @case (plateMode.On) {
+    <section class="on">
+      <header [style.backgroundColor]="config.color!" [class.expanded]="!showExpand" [class.dark-bg]="isColorDark(config.color)">
+        <div class="header-content">
+          <h3>{{config.name}}@if (!showExpand) {
+            <span class="item-count-badge">{{progressItems.length}}</span>
+          }</h3>
+          <div class="header-badges">
+            @if (maxDelayMinutes > 0) {
+              <p-tag
+                [severity]="delaySeverity === 'warning' ? 'warn' : delaySeverity"
+                [pTooltip]="getDelayTooltip()"
+                tooltipPosition="bottom">
+                <i class="pi pi-clock delay-icon"></i>
+                <span>{{ getDelayLabel() }}</span>
+              </p-tag>
+            }
+            <p-tag [severity]="config._severity!"
+              [value]="config._status!"
+            [style.display]="'none'"></p-tag>
+          </div>
         </div>
-      </div>
-      
-      <button *ngIf="!showExpand"
-              [pTooltip]="viewMode === 'rows' ? 'Vista Colonne' : 'Vista Righe'" 
-              tooltipPosition="bottom"
-              class="view-mode-button" 
-              [class.active]="viewMode === 'columns'"
-              (click)="onViewMode()">
-        <i [class]="viewMode === 'rows' ? 'pi pi-pause' : 'pi pi-list'"></i>
-      </button>
-      
-      <button (click)="expandTab()"
-              *ngIf="showExpand"
-              [pTooltip]="'Espandi ' + config.name"
-              [showDelay]="500"
-              tooltipPosition="bottom"
-              class="expand-button">
-        <i class="pi pi-external-link"></i>
-      </button>
-    </header>
-    <span *ngIf="config._severity !== 'danger' && progressItems.length == 0" id="empty-container">
-      <h3>{{i18n.PLATE.EMPTY}}</h3>
-      <img src="assets/img/waiting-for-food.png" alt="Waiting for food" class="empty-icon">
-      <p class="empty-subtitle">In attesa di ordini...</p>
-    </span>
-    <div *ngIf="!(queue.isEmpty$ | async)" 
-         class="item-list_container" 
+        @if (!showExpand) {
+          <button
+            [pTooltip]="viewMode === 'rows' ? 'Vista Colonne' : 'Vista Righe'"
+            tooltipPosition="bottom"
+            class="view-mode-button"
+            [class.active]="viewMode === 'columns'"
+            (click)="onViewMode()">
+            <i [class]="viewMode === 'rows' ? 'pi pi-pause' : 'pi pi-list'"></i>
+          </button>
+        }
+        @if (showExpand) {
+          <button (click)="expandTab()"
+            [pTooltip]="'Espandi ' + config.name"
+            [showDelay]="500"
+            tooltipPosition="bottom"
+            class="expand-button">
+            <i class="pi pi-external-link"></i>
+          </button>
+        }
+      </header>
+      @if (config._severity !== 'danger' && progressItems.length == 0) {
+        <span id="empty-container">
+          <h3>{{i18n.PLATE.EMPTY}}</h3>
+          <img src="assets/img/waiting-for-food.png" alt="Waiting for food" class="empty-icon">
+          <p class="empty-subtitle">In attesa di ordini...</p>
+        </span>
+      }
+      @if (!(queue.isEmpty$ | async)) {
+        <div
+          class="item-list_container"
          [ngClass]="{
            'rows': viewMode === 'rows', 
            'columns': viewMode === 'columns',
            'expanded-view': readonly
          }">
-      <ng-container *ngFor="let item of progressItems">
-        <item (onCancelEvent)="handleItemEvent($event)"
+          @for (item of progressItems; track item) {
+            <item (onCancelEvent)="handleItemEvent($event)"
               (onDoneEvent)="handleItemEvent($event)"
               [config]="item"
               [plateList]="plateList"
               [readonly]="readonly"
               [showDelay]="!showExpand || showItemDelays"
               [currentPlate]="config"
-        ></item>
-      </ng-container>
-    </div>
-    <ng-container *ngIf="showSortOverlay" [ngTemplateOutlet]="sortingOverlay"></ng-container>
-    <button pButton
-            class="p-button-rounded p-button-info items-sort-badge"
-            type="button"
-            icon="pi pi-sort-alt"
-            (click)="showSortOverlay = !showSortOverlay">
-    </button>
-    <ng-container *ngIf="showOverlay" [ngTemplateOutlet]="overlay"></ng-container>
-    <p-badge class="items-queue-badge"
-             (click)="onBadgeMouseClick()"
-             (mouseenter)="onBadgeMouseEnter()"
-             (mouseleave)="onBadgeMouseLeave()"
-             *ngIf="todoItems.length > 0"
-             [severity]="badgeColor"
-             [size]="badgeSize"
-             [value]="todoItems.length + ''"></p-badge>
-  </section>
-  <section *ngSwitchCase="plateMode.Off" class="off">
-    <header>
-      <h3>{{config.name}}</h3>
-    </header>
-    <p-tag [style]="{backgroundColor: 'black'}"
-           [value]="i18n.PLATE.OFF"
-           styleClass="mr-2"></p-tag>
-  </section>
-  <section *ngSwitchCase="plateMode.Form">
-    <form (ngSubmit)="onSubmit()" [formGroup]="form!">
-      <h3>{{i18n.PLATE.FORM.TITLE}}</h3>
-      <label>{{i18n.PLATE.FORM.NAME}}</label>
-      <input formControlName="name"
-             pInputText
-             type="text">
-      <label>{{i18n.PLATE.FORM.COLOR}}</label>
-      <p-colorPicker [inline]="true"
-                     formControlName="color"></p-colorPicker>
-      <label>{{i18n.PLATE.FORM.NUMBER}}</label>
-      <p-inputNumber [max]="200"
-                     [min]="0"
-                     [showButtons]="true"
-                     formControlName="number"></p-inputNumber>
-      <div id="confirmForm">
-        <button (click)="discardForm()"
-                [label]="i18n.COMMON.UNDO"
-                class="p-button-secondary" pButton pRipple
-                type="button"></button>
-        <button [disabled]="form?.valid ? !form?.valid : true"
-                [label]="i18n.COMMON.SAVE"
-                class="p-button-success" pButton pRipple
-                type="submit"></button>
-      </div>
-    </form>
-  </section>
-</ng-container>
+            ></item>
+          }
+        </div>
+      }
+      @if (showSortOverlay) {
+        <ng-container [ngTemplateOutlet]="sortingOverlay"></ng-container>
+      }
+      <p-button
+        styleClass="p-button-rounded p-button-info items-sort-badge"
+        type="button"
+        icon="pi pi-sort-alt"
+        (click)="showSortOverlay = !showSortOverlay">
+      </p-button>
+      @if (showOverlay) {
+        <ng-container [ngTemplateOutlet]="overlay"></ng-container>
+      }
+      @if (todoItems.length > 0) {
+        <p-badge class="items-queue-badge"
+          (click)="onBadgeMouseClick()"
+          (mouseenter)="onBadgeMouseEnter()"
+          (mouseleave)="onBadgeMouseLeave()"
+          [severity]="badgeColor"
+          [size]="badgeSize"
+        [value]="todoItems.length + ''"></p-badge>
+      }
+    </section>
+  }
+  @case (plateMode.Off) {
+    <section class="off">
+      <header>
+        <h3>{{config.name}}</h3>
+      </header>
+      <p-tag [style]="{backgroundColor: 'black'}"
+        [value]="i18n.PLATE.OFF"
+      styleClass="mr-2"></p-tag>
+    </section>
+  }
+  @case (plateMode.Form) {
+    <section>
+      <form (ngSubmit)="onSubmit()" [formGroup]="form!">
+        <h3>{{i18n.PLATE.FORM.TITLE}}</h3>
+        <label>{{i18n.PLATE.FORM.NAME}}</label>
+        <input formControlName="name"
+          pInputText
+          type="text">
+        <label>{{i18n.PLATE.FORM.COLOR}}</label>
+        <p-color-picker [inline]="true"
+        formControlName="color"></p-color-picker>
+        <label>{{i18n.PLATE.FORM.NUMBER}}</label>
+        <p-input-number [max]="200"
+          [min]="0"
+          [showButtons]="true"
+        formControlName="number"></p-input-number>
+        <div id="confirmForm">
+          <p-button (click)="discardForm()"
+            [label]="i18n.COMMON.UNDO"
+            styleClass="p-button-secondary"
+          type="button"></p-button>
+          <p-button [disabled]="form?.valid ? !form?.valid : true"
+            [label]="i18n.COMMON.SAVE"
+            styleClass="p-button-success"
+          type="submit"></p-button>
+        </div>
+      </form>
+    </section>
+  }
+}
 <ng-template #sortingOverlay>
   <div class="sort-overlay">
     <p-menu [model]="sortingOptions"></p-menu>
@@ -126,10 +149,10 @@
 </ng-template>
 <ng-template #overlay>
   <items-overlay (onClose)="onBadgeMouseClick()"
-                 (onRun)="onItemStart($event)"
-                 (onActionEvent)="handleItemEvent($event)"
-                 [items]="todoItems"
-                 [enableActions]="!readonly"
-                 [plateList]="plateList"
+    (onRun)="onItemStart($event)"
+    (onActionEvent)="handleItemEvent($event)"
+    [items]="todoItems"
+    [enableActions]="!readonly"
+    [plateList]="plateList"
   ></items-overlay>
 </ng-template>

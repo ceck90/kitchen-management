@@ -1,7 +1,7 @@
-import {Component, ElementRef, EventEmitter, Input, NgModule, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, NgModule, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ItemEvent, mode, Plate, PlateInterface} from "../plate.interface";
 import {I18nService} from "../../../services/i18n.service";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Routing} from "../../../app-routing.module";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ReactiveQueue} from "../../shared/class/reactive-queue";
@@ -24,9 +24,11 @@ import {MenuItem} from 'primeng/api';
 import {DelayThresholdsService} from "../../../services/delay-thresholds.service";
 
 @Component({
-  selector: 'plate',
-  templateUrl: './plate.component.html',
-  styleUrls: ['./plate.component.scss']
+    selector: 'plate',
+    templateUrl: './plate.component.html',
+    styleUrls: ['./plate.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlateComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -52,11 +54,11 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
 
   public icon: string = "pi-plus";
   public plateMode: typeof PlateInterface = mode();
-  public form?: FormGroup | undefined;
+  public form?: UntypedFormGroup | undefined;
   public showExpand: boolean = true;
   public readonly: boolean = false;
-  public badgeSize: string = "large";
-  public badgeColor: string = "info";
+  public badgeSize: 'small' | 'large' | 'xlarge' = "large";
+  public badgeColor: 'info' | 'success' | 'warn' | 'danger' | 'secondary' | 'contrast' = "info";
   public showOverlay: boolean = false;
   public showSortOverlay: boolean = false;
   public progressItems: PlateMenuItem[] = [];
@@ -263,10 +265,10 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public loadForm(): void {
-    this.form = new FormGroup({
-      name: new FormControl("", Validators.required),
-      color: new FormControl("", Validators.required),
-      number: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")])
+    this.form = new UntypedFormGroup({
+      name: new UntypedFormControl("", Validators.required),
+      color: new UntypedFormControl("", Validators.required),
+      number: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")])
     });
     this.config.mode = PlateInterface.Form;
   }

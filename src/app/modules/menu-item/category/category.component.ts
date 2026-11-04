@@ -1,12 +1,14 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {CategoryService} from "../../plate-menu-items/services/category.service";
 import {Observable, of} from "rxjs";
 import {Category} from "../../plate-menu-items/plate-menu-item";
 
 @Component({
-  selector: 'category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.scss']
+    selector: 'category',
+    templateUrl: './category.component.html',
+    styleUrls: ['./category.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class CategoryComponent implements OnChanges {
 

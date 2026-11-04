@@ -1,9 +1,9 @@
-FROM node:16.20.2-alpine3.18 AS build
+FROM node:22.22.3-alpine AS build
 
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . ./
 RUN npm run build
 
@@ -13,7 +13,7 @@ RUN apk add --no-cache su-exec
 COPY docker/nginx-main.conf /etc/nginx/nginx.conf
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/entrypoint.sh /usr/local/bin/kitchen-management-entrypoint
-COPY --from=build /app/dist/app /usr/share/nginx/html
+COPY --from=build /app/dist/app/browser /usr/share/nginx/html
 
 RUN chmod 755 /usr/local/bin/kitchen-management-entrypoint \
     && mkdir -p /var/lib/kitchen-management \

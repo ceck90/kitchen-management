@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {I18nService} from 'src/app/services/i18n.service';
 import {PlateMenuItemsService} from '../../shared/service/plate-menu-items.service';
 import {Table} from 'primeng/table';
@@ -13,13 +13,15 @@ import {PKMINotification, PKMINotificationType} from 'src/app/services/pkmi-noti
 import {Plate} from "../../plates/plate.interface";
 import {PlateService} from "../../plates/services/plate.service";
 import {CategoryService} from "../services/category.service";
-import {HttpErrorResponse} from "@angular/common/http";
+import { HttpErrorResponse } from "@angular/common/http";
 import {Error} from "../../shared/interface/error.interface";
 
 @Component({
-  selector: 'orders',
-  templateUrl: './plate-menu-items.component.html',
-  styleUrls: ['./plate-menu-items.component.scss']
+    selector: 'orders',
+    templateUrl: './plate-menu-items.component.html',
+    styleUrls: ['./plate-menu-items.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlateMenuItemsComponent implements OnInit, OnDestroy {
 

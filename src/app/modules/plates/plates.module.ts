@@ -9,16 +9,16 @@ import {BadgeModule} from "primeng/badge";
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from "primeng/api";
 import {ItemsOverlayComponentModule} from "./items-overlay/items-overlay.component";
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { FormsModule } from '@angular/forms';
 import { PlatesSummaryComponent } from './plates-summary/plates-summary.component';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ChartModule } from 'primeng/chart';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { PlateMenuItemsService } from '../shared/service/plate-menu-items.service';
 import { PlatePairsConfigComponent } from './plate-pairs-config/plate-pairs-config.component';
 import { PlatePairViewComponent } from './plate-pair-view/plate-pair-view.component';
@@ -69,15 +69,15 @@ const routes: Routes = [
     ItemComponentModule,
     ItemsOverlayComponentModule,
     ToastModule,
-    InputSwitchModule,
+    ToggleSwitchModule,
     FormsModule,
     TableModule,
     TagModule,
     ButtonModule,
     TooltipModule,
-    CalendarModule,
+    DatePickerModule,
     ChartModule,
-    DropdownModule,
+    SelectModule,
     DialogModule,
     InputTextModule
   ],

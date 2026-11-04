@@ -1,11 +1,13 @@
-import {Component, EventEmitter, Input, Output, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {MenuItem} from "../../plate-menu-items/plate-menu-item";
 import {I18nService} from "../../../services/i18n.service";
 
 @Component({
-  selector: 'menu-item-list',
-  templateUrl: './menu-item-list.component.html',
-  styleUrls: ['./menu-item-list.component.scss']
+    selector: 'menu-item-list',
+    templateUrl: './menu-item-list.component.html',
+    styleUrls: ['./menu-item-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MenuItemListComponent implements OnChanges {
 

@@ -1,5 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {PrimeNGConfig} from "primeng/api";
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {WebSocketService} from './services/web-socket-service';
 import {ThemeService} from './services/theme.service';
 import {NavigationEnd, Router} from '@angular/router';
@@ -7,14 +6,16 @@ import {filter} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 
 @Component({
-  selector: 'app-root',
-  template: `
+    selector: 'app-root',
+    template: `
     <div id="app-container-id" [class]="showNavbar ? 'app-container' : 'app-container-full'">
       <router-outlet></router-outlet>
     </div>
-    <navbar id="navbar-id" *ngIf="showNavbar"></navbar>
-  `,
-  styles: [`
+    @if (showNavbar) {
+      <navbar id="navbar-id"></navbar>
+    }
+    `,
+    styles: [`
     .app-container {
       min-height: calc(100vh - 70px);
       padding-bottom: 70px;
@@ -44,7 +45,9 @@ import {Subscription} from 'rxjs';
         padding-bottom: 60px;
       }
     }
-  `]
+  `],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AppComponent implements OnInit, OnDestroy {
 
@@ -52,11 +55,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private _subs: Subscription = new Subscription();
 
-  constructor(private _primengConfig: PrimeNGConfig,
-              private _webSocketService: WebSocketService,
+  constructor(private _webSocketService: WebSocketService,
               private _themeService: ThemeService,
               private _router: Router) {
-    this._primengConfig.ripple = true;
     // ThemeService automatically applies saved theme on construction
   }
 

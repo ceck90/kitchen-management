@@ -2,11 +2,11 @@
   <div class="search-bar">
     <span class="p-input-icon-left">
       <i class="pi pi-search"></i>
-      <input type="text" 
-             pInputText 
-             [placeholder]="i18n.ITEM.SEARCH_PLACEHOLDER" 
-             [(ngModel)]="searchText"
-             (input)="onSearch()">
+      <input type="text"
+        pInputText
+        [placeholder]="i18n.ITEM.SEARCH_PLACEHOLDER"
+        [(ngModel)]="searchText"
+        (input)="onSearch()">
     </span>
     <div class="items-count">
       <i class="pi pi-shopping-bag"></i>
@@ -14,95 +14,109 @@
     </div>
   </div>
 
-  <div class="items-grid" *ngIf="filteredItems.length > 0">
-    <div *ngFor="let item of filteredItems; let i = index" 
-         class="item-card"
-         [class.editing]="isEditing(item)">
-      
-      <div class="card-header">
-        <div class="item-number" [style.background-color]="categoryColor">
-          #{{item.externalId || '—'}}
-        </div>
-        <div class="card-actions" *ngIf="!isEditing(item)">
-          <button pButton pRipple 
+  @if (filteredItems.length > 0) {
+    <div class="items-grid">
+      @for (item of filteredItems; track item; let i = $index) {
+        <div
+          class="item-card"
+          [class.editing]="isEditing(item)">
+          <div class="card-header">
+            <div class="item-number" [style.background-color]="categoryColor">
+              #{{item.externalId || '—'}}
+            </div>
+            @if (!isEditing(item)) {
+              <div class="card-actions">
+                <p-button
                   icon="pi pi-pencil"
-                  class="p-button-rounded p-button-text p-button-sm"
+                  styleClass="p-button-rounded p-button-text p-button-sm"
                   [pTooltip]="i18n.COMMON.EDIT"
                   tooltipPosition="top"
                   (click)="onRowEditInit(item)">
-          </button>
-          <button pButton pRipple 
+                </p-button>
+                <p-button
                   icon="pi pi-trash"
-                  class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                  styleClass="p-button-rounded p-button-text p-button-danger p-button-sm"
                   [pTooltip]="i18n.COMMON.DELETE"
                   tooltipPosition="top"
                   (click)="onDelete(item)">
-          </button>
-        </div>
-        <div class="card-actions" *ngIf="isEditing(item)">
-          <button pButton pRipple 
+                </p-button>
+              </div>
+            }
+            @if (isEditing(item)) {
+              <div class="card-actions">
+                <p-button
                   icon="pi pi-check"
-                  class="p-button-rounded p-button-text p-button-success p-button-sm"
+                  styleClass="p-button-rounded p-button-text p-button-success p-button-sm"
                   [pTooltip]="i18n.COMMON.SAVE"
                   tooltipPosition="top"
                   (click)="onRowEditSave(item)">
-          </button>
-          <button pButton pRipple 
+                </p-button>
+                <p-button
                   icon="pi pi-times"
-                  class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                  styleClass="p-button-rounded p-button-text p-button-danger p-button-sm"
                   [pTooltip]="i18n.COMMON.UNDO"
                   tooltipPosition="top"
                   (click)="onRowEditCancel(item, i)">
-          </button>
+                </p-button>
+              </div>
+            }
+          </div>
+          <div class="card-content">
+            <div class="item-name">
+              @if (!isEditing(item)) {
+                <i class="pi pi-tag"></i>
+                <span>{{item.name}}</span>
+              }
+              @if (isEditing(item)) {
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="item.name"
+                  [placeholder]="i18n.ITEM.PRODUCT_NAME_PLACEHOLDER">
+              }
+            </div>
+            <div class="item-description">
+              @if (!isEditing(item)) {
+                <i class="pi pi-align-left"></i>
+                <span>{{item.description || i18n.ITEM.NO_DESCRIPTION}}</span>
+              }
+              @if (isEditing(item)) {
+                <textarea
+                  pInputTextarea
+                  [(ngModel)]="item.description"
+                  [placeholder]="i18n.ITEM.PRODUCT_DESC_PLACEHOLDER"
+                  rows="2">
+                </textarea>
+              }
+            </div>
+            @if (isEditing(item)) {
+              <div class="item-external-id">
+                <label>{{i18n.ITEM.EXTERNAL_ID_LABEL}}</label>
+                <input pInputText
+                  type="number"
+                  [(ngModel)]="item.externalId"
+                  [placeholder]="i18n.ITEM.EXTERNAL_ID_PLACEHOLDER">
+              </div>
+            }
+          </div>
         </div>
-      </div>
-
-      <div class="card-content">
-        <div class="item-name">
-          <ng-container *ngIf="!isEditing(item)">
-            <i class="pi pi-tag"></i>
-            <span>{{item.name}}</span>
-          </ng-container>
-          <input *ngIf="isEditing(item)" 
-                 pInputText 
-                 type="text" 
-                 [(ngModel)]="item.name"
-                 [placeholder]="i18n.ITEM.PRODUCT_NAME_PLACEHOLDER">
-        </div>
-
-        <div class="item-description">
-          <ng-container *ngIf="!isEditing(item)">
-            <i class="pi pi-align-left"></i>
-            <span>{{item.description || i18n.ITEM.NO_DESCRIPTION}}</span>
-          </ng-container>
-          <textarea *ngIf="isEditing(item)" 
-                    pInputTextarea 
-                    [(ngModel)]="item.description"
-                    [placeholder]="i18n.ITEM.PRODUCT_DESC_PLACEHOLDER"
-                    rows="2">
-          </textarea>
-        </div>
-
-        <div class="item-external-id" *ngIf="isEditing(item)">
-          <label>{{i18n.ITEM.EXTERNAL_ID_LABEL}}</label>
-          <input pInputText 
-                 type="number" 
-                 [(ngModel)]="item.externalId"
-                 [placeholder]="i18n.ITEM.EXTERNAL_ID_PLACEHOLDER">
-        </div>
-      </div>
+      }
     </div>
-  </div>
+  }
 
-  <div class="empty-state" *ngIf="filteredItems.length === 0 && (!items || items.length === 0)">
-    <i class="pi pi-inbox"></i>
-    <h4>{{i18n.ITEM.NO_PRODUCTS}} {{categoryName}}</h4>
-    <p>{{i18n.ITEM.NO_PRODUCTS_DESC}}</p>
-  </div>
+  @if (filteredItems.length === 0 && (!items || items.length === 0)) {
+    <div class="empty-state">
+      <i class="pi pi-inbox"></i>
+      <h4>{{i18n.ITEM.NO_PRODUCTS}} {{categoryName}}</h4>
+      <p>{{i18n.ITEM.NO_PRODUCTS_DESC}}</p>
+    </div>
+  }
 
-  <div class="empty-state" *ngIf="filteredItems.length === 0 && items && items.length > 0">
-    <i class="pi pi-search"></i>
-    <h4>Nessun risultato</h4>
-    <p>Nessun prodotto corrisponde alla ricerca "{{searchText}}"</p>
-  </div>
+  @if (filteredItems.length === 0 && items && items.length > 0) {
+    <div class="empty-state">
+      <i class="pi pi-search"></i>
+      <h4>Nessun risultato</h4>
+      <p>Nessun prodotto corrisponde alla ricerca "{{searchText}}"</p>
+    </div>
+  }
 </div>

@@ -1,16 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {CategoryService} from "../../plate-menu-items/services/category.service";
 import {Observable, of} from "rxjs";
 import {Category, MenuItem} from "../../plate-menu-items/plate-menu-item";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {I18nService} from "../../../services/i18n.service";
 import {MenuItemsService} from "../../plate-menu-items/services/menu-items.service";
 import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
-  selector: 'menu-item',
-  templateUrl: './menu-item.component.html',
-  styleUrls: ['./menu-item.component.scss']
+    selector: 'menu-item',
+    templateUrl: './menu-item.component.html',
+    styleUrls: ['./menu-item.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class MenuItemComponent implements OnInit {
 
@@ -19,8 +21,8 @@ export class MenuItemComponent implements OnInit {
   public categories$: Observable<Category[]> = of([]);
   public items$: Observable<MenuItem[]> = of([]);
   public selectedCategory?: Category;
-  public categoryForm?: FormGroup | undefined;
-  public menuItemForm?: FormGroup | undefined;
+  public categoryForm?: UntypedFormGroup | undefined;
+  public menuItemForm?: UntypedFormGroup | undefined;
   public categoryDisplay: boolean = false;
   public menuItemDisplay: boolean = false;
   public isEdit: boolean = false;
@@ -43,20 +45,20 @@ export class MenuItemComponent implements OnInit {
   ngOnInit(): void {
     this.categories$ = this._categoryService.getAll();
 
-    this.categoryForm = new FormGroup({
-      name: new FormControl("", Validators.required),
-      description: new FormControl("", Validators.required),
-      color: new FormControl("", Validators.required),
-      id: new FormControl(null),
-      externalId: new FormControl(-1)
+    this.categoryForm = new UntypedFormGroup({
+      name: new UntypedFormControl("", Validators.required),
+      description: new UntypedFormControl("", Validators.required),
+      color: new UntypedFormControl("", Validators.required),
+      id: new UntypedFormControl(null),
+      externalId: new UntypedFormControl(-1)
     });
 
-    this.menuItemForm = new FormGroup({
-      name: new FormControl("", Validators.required),
-      description: new FormControl("", Validators.required),
-      id: new FormControl(null),
-      categoryId: new FormControl(null),
-      externalId: new FormControl(-1)
+    this.menuItemForm = new UntypedFormGroup({
+      name: new UntypedFormControl("", Validators.required),
+      description: new UntypedFormControl("", Validators.required),
+      id: new UntypedFormControl(null),
+      categoryId: new UntypedFormControl(null),
+      externalId: new UntypedFormControl(-1)
     });
   }
 

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ApiConnector} from "./api-connector";
 import {map, Observable, of} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {PlateMenuItem} from "../modules/plate-menu-items/plate-menu-item";
 import {TreeNode} from "primeng/api";
 import {Plate} from "../modules/plates/plate.interface";

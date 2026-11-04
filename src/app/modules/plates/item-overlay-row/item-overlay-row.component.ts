@@ -1,16 +1,18 @@
-import {Component, EventEmitter, Input, NgModule, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, NgModule, OnInit, Output, ChangeDetectionStrategy} from '@angular/core';
 import {PlateMenuItem, Status} from "../../plate-menu-items/plate-menu-item";
 import {ItemEvent, Plate, PlateItemStatus, PlateMenuItemAction} from "../plate.interface";
-import {MenuItem as PrimeMenuItem} from "primeng/api/menuitem";
+import {MenuItem as PrimeMenuItem} from "primeng/api";
 import {CommonModule} from "@angular/common";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {TooltipModule} from "primeng/tooltip";
 
 @Component({
-  selector: 'item-overlay-row',
-  templateUrl: './item-overlay-row.component.html',
-  styleUrls: ['./item-overlay-row.component.scss']
+    selector: 'item-overlay-row',
+    templateUrl: './item-overlay-row.component.html',
+    styleUrls: ['./item-overlay-row.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ItemOverlayRowComponent implements OnInit {
 

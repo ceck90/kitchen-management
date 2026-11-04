@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {RequestService} from "./request.service";
 import {ApiResourceEnum} from "./api-resource.enum";
 import {Stats} from "../interface/stats.interface";
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {map, Observable} from "rxjs";
 
 @Injectable({

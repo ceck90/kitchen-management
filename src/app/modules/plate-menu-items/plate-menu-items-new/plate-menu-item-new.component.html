@@ -26,39 +26,39 @@
               <i class="pi pi-hashtag"></i>
               {{i18n.ORDERS.NEW_ORDER_PAGE.ORDER_NUMBER}}
             </label>
-            <p-inputNumber 
+            <p-input-number
               [max]="1000"
               [min]="0"
               [showButtons]="true"
               formControlName="orderNumber"
               id="orderNumber"
               placeholder="0"
-            ></p-inputNumber>
+            ></p-input-number>
             <small class="field-hint">{{i18n.ORDERS.NEW_ORDER_PAGE.ORDER_NUMBER_HINT}}</small>
           </div>
-          
+
           <div class="form-field">
             <label for="tableNumber">
               <i class="pi pi-table"></i>
               {{i18n.ORDERS.NEW_ORDER_PAGE.TABLE_NUMBER}}
             </label>
-            <input pInputText 
-              type="text" 
-              id="tableNumber" 
-              formControlName="tableNumber" 
+            <input pInputText
+              type="text"
+              id="tableNumber"
+              formControlName="tableNumber"
               [placeholder]="i18n.ORDERS.NEW_ORDER_PAGE.TABLE_PLACEHOLDER" />
             <small class="field-hint">{{i18n.ORDERS.NEW_ORDER_PAGE.TABLE_NUMBER_HINT}}</small>
           </div>
-          
+
           <div class="form-field">
             <label for="clientName">
               <i class="pi pi-user"></i>
               {{i18n.ORDERS.NEW_ORDER_PAGE.CLIENT_NAME}}
             </label>
-            <input pInputText 
-              type="text" 
-              id="clientName" 
-              formControlName="clientName" 
+            <input pInputText
+              type="text"
+              id="clientName"
+              formControlName="clientName"
               [placeholder]="i18n.ORDERS.NEW_ORDER_PAGE.CLIENT_PLACEHOLDER" />
             <small class="field-hint">{{i18n.ORDERS.NEW_ORDER_PAGE.CLIENT_NAME_HINT}}</small>
           </div>
@@ -75,37 +75,52 @@
           <i class="pi pi-list"></i>
           <h3>{{i18n.ORDERS.NEW_ORDER_PAGE.SELECT_PRODUCTS}}</h3>
         </div>
-        <span class="items-count" *ngIf="plateMenuItems.length">
-          {{plateMenuItems.length}} {{plateMenuItems.length === 1 ? i18n.ORDERS.NEW_ORDER_PAGE.PRODUCT_COUNT_SINGLE : i18n.ORDERS.NEW_ORDER_PAGE.PRODUCT_COUNT_PLURAL}}
-        </span>
+        @if (plateMenuItems.length) {
+          <span class="items-count">
+            {{plateMenuItems.length}} {{plateMenuItems.length === 1 ? i18n.ORDERS.NEW_ORDER_PAGE.PRODUCT_COUNT_SINGLE : i18n.ORDERS.NEW_ORDER_PAGE.PRODUCT_COUNT_PLURAL}}
+          </span>
+        }
       </div>
       <div class="card-body">
         <form [formGroup]="form!">
-          <p-tabView *ngIf="categories.length" styleClass="menu-tabs">
-            <p-tabPanel [header]="category.name" *ngFor="let category of categories; let i = index" [selected]="i == 0">
-              <div class="menu-items-grid">
-                <ng-container *ngFor="let item of category.menuItems">
-                  <div class="menu-item-card"
-                       [class.selected]="item.selected"
-                       (click)="selectMenuItem($event, item)"
-                       pDraggable="ddOrders"
-                       (onDragStart)="dragStart(item)"
-                       (onDragEnd)="dragEnd()">
-                    <div class="card-icon">
-                      <i class="pi pi-shopping-cart"></i>
+          @if (categories.length) {
+            <p-tabs value="0" styleClass="menu-tabs">
+              <p-tablist>
+                @for (category of categories; track category; let i = $index) {
+                  <p-tab [value]="i">{{category.name}}</p-tab>
+                }
+              </p-tablist>
+              <p-tabpanels>
+                @for (category of categories; track category; let i = $index) {
+                  <p-tabpanel [value]="i">
+                    <div class="menu-items-grid">
+                      @for (item of category.menuItems; track item) {
+                        <div class="menu-item-card"
+                          [class.selected]="item.selected"
+                          (click)="selectMenuItem($event, item)"
+                          pDraggable="ddOrders"
+                          (onDragStart)="dragStart(item)"
+                          (onDragEnd)="dragEnd()">
+                          <div class="card-icon">
+                            <i class="pi pi-shopping-cart"></i>
+                          </div>
+                          <div class="card-content">
+                            <div class="item-name">{{item.name}}</div>
+                            <div class="item-description">{{item.description}}</div>
+                          </div>
+                          @if (item.selected) {
+                            <div class="card-checkmark">
+                              <i class="pi pi-check"></i>
+                            </div>
+                          }
+                        </div>
+                      }
                     </div>
-                    <div class="card-content">
-                      <div class="item-name">{{item.name}}</div>
-                      <div class="item-description">{{item.description}}</div>
-                    </div>
-                    <div class="card-checkmark" *ngIf="item.selected">
-                      <i class="pi pi-check"></i>
-                    </div>
-                  </div>
-                </ng-container>
-              </div>
-            </p-tabPanel>
-          </p-tabView>
+                  </p-tabpanel>
+                }
+              </p-tabpanels>
+            </p-tabs>
+          }
         </form>
       </div>
     </div>
@@ -118,46 +133,46 @@
           <h3>{{i18n.ORDERS.NEW_ORDER_PAGE.ORDER_SUMMARY}}</h3>
         </div>
       </div>
-      
+
       <div class="card-body">
         <div class="table-toolbar">
           <div class="toolbar-left">
-            <button pButton pRipple 
-              [label]="i18n.ORDERS.NEW_ORDER_PAGE.SAVE_ORDER" 
-              icon="pi pi-check" 
-              class="p-button-success" 
-              (click)="savePkmis()" 
+            <p-button
+              [label]="i18n.ORDERS.NEW_ORDER_PAGE.SAVE_ORDER"
+              icon="pi pi-check"
+              styleClass="p-button-success"
+              (click)="savePkmis()"
               [disabled]="form?.invalid || !plateMenuItems.length">
-            </button>
+            </p-button>
           </div>
           <div class="toolbar-right">
-            <button pButton pRipple 
-              [label]="i18n.ORDERS.NEW_ORDER_PAGE.DELETE_SELECTED" 
-              icon="pi pi-trash" 
-              class="p-button-danger p-button-outlined" 
+            <p-button
+              [label]="i18n.ORDERS.NEW_ORDER_PAGE.DELETE_SELECTED"
+              icon="pi pi-trash"
+              styleClass="p-button-danger p-button-outlined"
               (click)="deleteSelectedProducts()"
               [disabled]="!selectedPlateMenuItems || !selectedPlateMenuItems.length">
-            </button>
-            <p-splitButton 
-              [label]="i18n.ORDERS.NEW_ORDER_PAGE.ASSIGN_PLATE" 
-              icon="pi pi-inbox" 
-              [model]="platesAction" 
+            </p-button>
+            <p-split-button
+              [label]="i18n.ORDERS.NEW_ORDER_PAGE.ASSIGN_PLATE"
+              icon="pi pi-inbox"
+              [model]="platesAction"
               styleClass="p-button-info"
               [disabled]="!selectedPlateMenuItems || !selectedPlateMenuItems.length">
-            </p-splitButton>
+            </p-split-button>
           </div>
         </div>
 
         <p-table #dt
-             [value]="plateMenuItems" 
-             selectionMode="multiple"
-             [(selection)]="selectedPlateMenuItems" 
-             dataKey="id" 
-             styleClass="modern-table p-datatable-modern"
-             [rowHover]="true"
-             [filterDelay]="0"
-             editMode="row"
-        >
+          [value]="plateMenuItems"
+          selectionMode="multiple"
+          [(selection)]="selectedPlateMenuItems"
+          dataKey="id"
+          styleClass="modern-table p-datatable-modern"
+          [rowHover]="true"
+          [filterDelay]="0"
+          editMode="row"
+          >
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 3rem">
@@ -194,7 +209,7 @@
                 </div>
               </th>
             </tr>
-      </ng-template>
+          </ng-template>
 
           <ng-template pTemplate="body" let-plateMenuItem let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="plateMenuItem">
@@ -215,74 +230,87 @@
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <p-dropdown 
-                      [options]="platesOptions" 
-                      [(ngModel)]="plateMenuItem.plate" 
+                    <p-select
+                      [options]="platesOptions"
+                      [(ngModel)]="plateMenuItem.plate"
                       optionLabel="label"
                       optionValue="value"
                       [style]="{'width':'100%'}"
                       [placeholder]="i18n.ORDERS.NEW_ORDER_PAGE.SELECT_PLATE">
-                    </p-dropdown>
+                    </p-select>
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <span class="plate-badge" 
-                          *ngIf="plateMenuItem.plate"
-                          [style]="{'background-color': getPlateColor(plateMenuItem.plate)}">
-                      <i class="pi pi-inbox"></i>
-                      {{plateMenuItem.plate}}
-                    </span>
-                    <span class="no-plate" *ngIf="!plateMenuItem.plate">
-                      <i class="pi pi-minus-circle"></i>
-                      {{i18n.ORDERS.NEW_ORDER_PAGE.NOT_ASSIGNED}}
-                    </span>
+                    @if (plateMenuItem.plate) {
+                      <span class="plate-badge"
+                        [style]="{'background-color': getPlateColor(plateMenuItem.plate)}">
+                        <i class="pi pi-inbox"></i>
+                        {{plateMenuItem.plate}}
+                      </span>
+                    }
+                    @if (!plateMenuItem.plate) {
+                      <span class="no-plate">
+                        <i class="pi pi-minus-circle"></i>
+                        {{i18n.ORDERS.NEW_ORDER_PAGE.NOT_ASSIGNED}}
+                      </span>
+                    }
                   </ng-template>
                 </p-cellEditor>
               </td>
               <td pEditableColumn>
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <input pInputText 
-                      type="text" 
+                    <input pInputText
+                      type="text"
                       [(ngModel)]="plateMenuItem.notes"
                       [placeholder]="i18n.ORDERS.NEW_ORDER_PAGE.ADD_NOTES">
                   </ng-template>
                   <ng-template pTemplate="output">
-                    <span class="notes-text" *ngIf="plateMenuItem.notes">
-                      <i class="pi pi-comment"></i>
-                      {{plateMenuItem.notes}}
-                    </span>
-                    <span class="no-notes" *ngIf="!plateMenuItem.notes">-</span>
+                    @if (plateMenuItem.notes) {
+                      <span class="notes-text">
+                        <i class="pi pi-comment"></i>
+                        {{plateMenuItem.notes}}
+                      </span>
+                    }
+                    @if (!plateMenuItem.notes) {
+                      <span class="no-notes">-</span>
+                    }
                   </ng-template>
                 </p-cellEditor>
               </td>
               <td class="actions-cell">
-                <button *ngIf="!editing" pButton pRipple 
-                  type="button" 
-                  pInitEditableRow 
-                  icon="pi pi-pencil"
-                  (click)="onRowEditInit(plateMenuItem)" 
-                  class="p-button-rounded p-button-text p-button-info"
-                  [pTooltip]="i18n.COMMON.EDIT"
-                  tooltipPosition="top">
-                </button>
-                <button *ngIf="editing" pButton pRipple 
-                  type="button" 
-                  pSaveEditableRow 
-                  icon="pi pi-check"
-                  (click)="onRowEditSave(plateMenuItem)" 
-                  class="p-button-rounded p-button-text p-button-success"
-                  [pTooltip]="i18n.COMMON.SAVE"
-                  tooltipPosition="top">
-                </button>
-                <button *ngIf="editing" pButton pRipple 
-                  type="button" 
-                  pCancelEditableRow 
-                  icon="pi pi-times"
-                  (click)="onRowEditCancel(plateMenuItem, ri)" 
-                  class="p-button-rounded p-button-text p-button-danger"
-                  [pTooltip]="i18n.COMMON.UNDO"
-                  tooltipPosition="top">
-                </button>
+                @if (!editing) {
+                  <p-button
+                    type="button"
+                    pInitEditableRow
+                    icon="pi pi-pencil"
+                    (click)="onRowEditInit(plateMenuItem)"
+                    styleClass="p-button-rounded p-button-text p-button-info"
+                    [pTooltip]="i18n.COMMON.EDIT"
+                    tooltipPosition="top">
+                  </p-button>
+                }
+                @if (editing) {
+                  <p-button
+                    type="button"
+                    pSaveEditableRow
+                    icon="pi pi-check"
+                    (click)="onRowEditSave(plateMenuItem)"
+                    styleClass="p-button-rounded p-button-text p-button-success"
+                    [pTooltip]="i18n.COMMON.SAVE"
+                    tooltipPosition="top">
+                  </p-button>
+                }
+                @if (editing) {
+                  <p-button
+                    type="button"
+                    pCancelEditableRow
+                    icon="pi pi-times"
+                    (click)="onRowEditCancel(plateMenuItem, ri)"
+                    styleClass="p-button-rounded p-button-text p-button-danger"
+                    [pTooltip]="i18n.COMMON.UNDO"
+                    tooltipPosition="top">
+                  </p-button>
+                }
               </td>
             </tr>
           </ng-template>

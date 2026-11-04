@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {I18nService} from "../../../services/i18n.service";
 import {Subscription} from "rxjs";
 import {Plate} from "../../plates/plate.interface";
 import {PlateService} from "../../plates/services/plate.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {ConfirmationService, MessageService} from "primeng/api";
 import { GsgIntegrationService } from '../../shared/service/gsg-integration.service';
 import { GsgIntegrationResult } from '../../shared/interface/gsg-integration.interface';
@@ -15,9 +15,11 @@ import { CategoryService } from '../../plate-menu-items/services/category.servic
 import { Category } from '../../plate-menu-items/plate-menu-item';
 
 @Component({
-  selector: 'settings',
-  templateUrl: 'settings.component.html',
-  styleUrls: ['./settings.component.scss']
+    selector: 'settings',
+    templateUrl: 'settings.component.html',
+    styleUrls: ['./settings.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class SettingsComponent implements OnInit, OnDestroy {
 
@@ -28,7 +30,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public isEditMode: boolean = false;
   public selectedPlate?: Plate;
   public plates: Plate[] = [];
-  public form?: FormGroup | undefined;
+  public form?: UntypedFormGroup | undefined;
   public showNotify: boolean = false;
   public showItemDelays: boolean = false;
   public delayThresholds: DelayThresholds = { warning: 10, danger: 20 };
@@ -42,7 +44,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   public displayPairDialog: boolean = false;
   public isEditPairMode: boolean = false;
   public selectedPairId?: string;
-  public pairForm?: FormGroup;
+  public pairForm?: UntypedFormGroup;
 
   // Color Picker Palette
   public primaryColors: string[] = [
@@ -92,19 +94,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.form = new FormGroup({
-      name: new FormControl("", Validators.required),
-      color: new FormControl("", Validators.required),
-      number: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      quickMoveEnabled: new FormControl(false),
-      quickMoveTargetPlateId: new FormControl(""),
-      categories: new FormControl([])
+    this.form = new UntypedFormGroup({
+      name: new UntypedFormControl("", Validators.required),
+      color: new UntypedFormControl("", Validators.required),
+      number: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
+      quickMoveEnabled: new UntypedFormControl(false),
+      quickMoveTargetPlateId: new UntypedFormControl(""),
+      categories: new UntypedFormControl([])
     });
 
-    this.pairForm = new FormGroup({
-      name: new FormControl("", Validators.required),
-      plateId1: new FormControl("", Validators.required),
-      plateId2: new FormControl("", Validators.required)
+    this.pairForm = new UntypedFormGroup({
+      name: new UntypedFormControl("", Validators.required),
+      plateId1: new UntypedFormControl("", Validators.required),
+      plateId2: new UntypedFormControl("", Validators.required)
     });
   }
 
@@ -209,14 +211,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     
     // Crea il form e poi mostra il dialog
     setTimeout(() => {
-      this.form = new FormGroup({
-        name: new FormControl("", Validators.required),
-        color: new FormControl("#3b82f6", Validators.required),
-        number: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
-        quickMoveEnabled: new FormControl(false),
-        quickMoveTargetPlateId: new FormControl(""),
-        expandedDoneButtonEnabled: new FormControl(false),
-        categories: new FormControl([])
+      this.form = new UntypedFormGroup({
+        name: new UntypedFormControl("", Validators.required),
+        color: new UntypedFormControl("#3b82f6", Validators.required),
+        number: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
+        quickMoveEnabled: new UntypedFormControl(false),
+        quickMoveTargetPlateId: new UntypedFormControl(""),
+        expandedDoneButtonEnabled: new UntypedFormControl(false),
+        categories: new UntypedFormControl([])
       });
       this.formReady = true;
       this.display = true;
@@ -239,14 +241,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
         
         // Crea il form e poi mostra il dialog
         setTimeout(() => {
-          this.form = new FormGroup({
-            name: new FormControl(plate.name, Validators.required),
-            color: new FormControl(plate.color, Validators.required),
-            number: new FormControl(plate.slot![1], [Validators.required, Validators.pattern("^[0-9]*$")]),
-            quickMoveEnabled: new FormControl(quickMoveSettings.enabled),
-            quickMoveTargetPlateId: new FormControl(quickMoveSettings.targetPlateId),
-            expandedDoneButtonEnabled: new FormControl(expandedDoneButtonEnabled),
-            categories: new FormControl(plate.categories || [])
+          this.form = new UntypedFormGroup({
+            name: new UntypedFormControl(plate.name, Validators.required),
+            color: new UntypedFormControl(plate.color, Validators.required),
+            number: new UntypedFormControl(plate.slot![1], [Validators.required, Validators.pattern("^[0-9]*$")]),
+            quickMoveEnabled: new UntypedFormControl(quickMoveSettings.enabled),
+            quickMoveTargetPlateId: new UntypedFormControl(quickMoveSettings.targetPlateId),
+            expandedDoneButtonEnabled: new UntypedFormControl(expandedDoneButtonEnabled),
+            categories: new UntypedFormControl(plate.categories || [])
           });
           this.formReady = true;
           this.display = true;

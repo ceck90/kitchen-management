@@ -8,51 +8,53 @@
 
     <!-- Navigation Items -->
     <div class="navbar-items">
-      <button class="nav-item" 
-              [class.active]="selectedRoute === routing.MenuItem"
-              (click)="onNavClick(routing.MenuItem)"
-              [pTooltip]="i18n.ITEM.TITLE"
-              tooltipPosition="top">
+      <button class="nav-item"
+        [class.active]="selectedRoute === routing.MenuItem"
+        (click)="onNavClick(routing.MenuItem)"
+        [pTooltip]="i18n.ITEM.TITLE"
+        tooltipPosition="top">
         <i class="pi pi-book nav-icon"></i>
         <span class="nav-label">{{ i18n.ITEM.TITLE }}</span>
       </button>
 
-      <button class="nav-item" 
-              [class.active]="selectedRoute === routing.Plates"
-              (click)="onNavClick(routing.Plates)"
-              [pTooltip]="i18n.PLATE.TITLE"
-              tooltipPosition="top">
+      <button class="nav-item"
+        [class.active]="selectedRoute === routing.Plates"
+        (click)="onNavClick(routing.Plates)"
+        [pTooltip]="i18n.PLATE.TITLE"
+        tooltipPosition="top">
         <div class="nav-icon-wrapper">
           <i class="pi pi-inbox nav-icon"></i>
-          <span *ngIf="plateQueueManagerService.haveNotify" 
-                class="nav-badge">{{ (plateQueueManagerService.notify | async) || 0 }}</span>
+          @if (plateQueueManagerService.haveNotify) {
+            <span
+            class="nav-badge">{{ (plateQueueManagerService.notify | async) || 0 }}</span>
+          }
         </div>
         <span class="nav-label">{{ i18n.PLATE.TITLE }}</span>
       </button>
 
-      <button class="nav-item" 
-              [class.active]="selectedRoute === routing.PlateMenuItems"
-              (click)="onNavClick(routing.PlateMenuItems)"
-              [pTooltip]="i18n.ORDERS.TITLE"
-              tooltipPosition="top">
+      <button class="nav-item"
+        [class.active]="selectedRoute === routing.PlateMenuItems"
+        (click)="onNavClick(routing.PlateMenuItems)"
+        [pTooltip]="i18n.ORDERS.TITLE"
+        tooltipPosition="top">
         <i class="pi pi-shopping-cart nav-icon"></i>
         <span class="nav-label">{{ i18n.ORDERS.TITLE }}</span>
       </button>
 
-      <button class="nav-item" 
-              [class.active]="selectedRoute === routing.PlatesSummary"
-              (click)="onNavClick(routing.PlatesSummary)"
-              [pTooltip]="i18n.SUMMARY.TITLE"
-              tooltipPosition="top">
+      <button class="nav-item"
+        [class.active]="selectedRoute === routing.PlatesSummary"
+        (click)="onNavClick(routing.PlatesSummary)"
+        [pTooltip]="i18n.SUMMARY.TITLE"
+        tooltipPosition="top">
         <i class="pi pi-chart-bar nav-icon"></i>
         <span class="nav-label">{{i18n.NAVBAR.SUMMARY}}</span>
       </button>
 
-      <button class="nav-item" 
-              [class.active]="selectedRoute === routing.Settings"
-              (click)="onNavClick(routing.Settings)"
-              [pTooltip]="i18n.SETTINGS.TITLE"
-              tooltipPosition="top">
+      <button class="nav-item"
+        [class.active]="selectedRoute === routing.Settings"
+        (click)="onNavClick(routing.Settings)"
+        [pTooltip]="i18n.SETTINGS.TITLE"
+        tooltipPosition="top">
         <i class="pi pi-cog nav-icon"></i>
         <span class="nav-label">{{ i18n.SETTINGS.TITLE }}</span>
       </button>

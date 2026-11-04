@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
@@ -14,9 +14,11 @@ import { ReactiveQueue } from '../../shared/class/reactive-queue';
 import { PlateMenuItemsService } from '../../shared/service/plate-menu-items.service';
 
 @Component({
-  selector: 'app-plate-pair-view',
-  templateUrl: './plate-pair-view.component.html',
-  styleUrls: ['./plate-pair-view.component.scss']
+    selector: 'app-plate-pair-view',
+    templateUrl: './plate-pair-view.component.html',
+    styleUrls: ['./plate-pair-view.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlatePairViewComponent implements OnInit, OnDestroy {
   public pair: PlatePair | null = null;

@@ -9,6 +9,7 @@ import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {TagModule} from "primeng/tag";
 import {BadgeModule} from "primeng/badge";
+import {OverlayBadgeModule} from "primeng/overlaybadge";
 import {TooltipModule} from 'primeng/tooltip';
 import {PlateMenuItemsService} from "./service/plate-menu-items.service";
 
@@ -26,6 +27,7 @@ import {PlateMenuItemsService} from "./service/plate-menu-items.service";
     RippleModule,
     TagModule,
     BadgeModule,
+    OverlayBadgeModule,
     TooltipModule
   ],
   exports: [

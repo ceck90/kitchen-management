@@ -16,7 +16,7 @@ import {ConfirmationService, MessageService} from 'primeng/api';
 import {ToastModule} from "primeng/toast";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TooltipModule} from "primeng/tooltip";
-import {InputTextareaModule} from "primeng/inputtextarea";
+import {TextareaModule} from "primeng/textarea";
 
 const routes: Routes = [
   {
@@ -46,7 +46,7 @@ const routes: Routes = [
     ToastModule,
     ScrollPanelModule,
     TooltipModule,
-    InputTextareaModule
+    TextareaModule
   ],
   providers: [ConfirmationService, MessageService]
 })

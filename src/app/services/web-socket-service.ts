@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import * as Stomp from 'stompjs';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
 import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {PKMINotification, PKMINotificationType} from "./pkmi-notification";

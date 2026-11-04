@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ItemEvent, mode, Plate, PlateInterface, PlateItemStatus} from "../plate.interface";
 import {I18nService} from "../../../services/i18n.service";
 import {PlateQueueManagerService} from "../services/plate-queue-manager.service";
@@ -13,9 +13,11 @@ import {PlatePair, PlatePairsService} from "../services/plate-pairs.service";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'plates',
-  templateUrl: './plates.component.html',
-  styleUrls: ['./plates.component.scss']
+    selector: 'plates',
+    templateUrl: './plates.component.html',
+    styleUrls: ['./plates.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlatesComponent implements OnInit, AfterViewInit, OnDestroy {
 

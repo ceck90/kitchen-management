@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {PlateService} from '../services/plate.service';
 import {PlateQueueManagerService} from '../services/plate-queue-manager.service';
@@ -37,9 +37,11 @@ interface GlobalStats {
 }
 
 @Component({
-  selector: 'plates-summary',
-  templateUrl: './plates-summary.component.html',
-  styleUrls: ['./plates-summary.component.scss']
+    selector: 'plates-summary',
+    templateUrl: './plates-summary.component.html',
+    styleUrls: ['./plates-summary.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
@@ -585,6 +587,11 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
   getDelaySeverity(minutes: number): 'success' | 'warning' | 'danger' {
     return this._delayThresholdsService.getSeverity(minutes);
+  }
+
+  getDelayTagSeverity(minutes: number): 'success' | 'warn' | 'danger' {
+    const severity = this.getDelaySeverity(minutes);
+    return severity === 'warning' ? 'warn' : severity;
   }
 
   formatTime(minutes: number): string {
