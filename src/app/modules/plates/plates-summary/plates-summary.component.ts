@@ -1303,7 +1303,7 @@ export class PlatesSummaryComponent implements OnInit, OnDestroy {
 
       // Logo (se disponibile)
       const logoImg = new Image();
-      logoImg.src = 'assets/img/logo_feston.png';
+      logoImg.src = 'assets/img/mfo-logo-light.png';
 
       logoImg.onload = () => {
         const logoWidth = 60;

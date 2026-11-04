@@ -62,7 +62,7 @@
 
     <!-- Logo Right -->
     <div class="navbar-logo">
-      <img src="assets/img/logo_feston.png" alt="FestOn Logo" class="logo-img">
+      <img [src]="(themeService.currentTheme$ | async) === 'dark' ? 'assets/img/mfo-logo.png' : 'assets/img/mfo-logo-light.png'" alt="FestOn Logo" class="logo-img">
     </div>
   </div>
 </nav>

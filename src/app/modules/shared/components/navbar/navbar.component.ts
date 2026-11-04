@@ -4,6 +4,7 @@ import {Routing} from "../../../../app-routing.module";
 import {PlateQueueManagerService} from "../../../plates/services/plate-queue-manager.service";
 import {I18nService} from "../../../../services/i18n.service";
 import {filter} from "rxjs/operators";
+import {ThemeService} from "../../../../services/theme.service";
 
 @Component({
     selector: 'navbar',
@@ -20,6 +21,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(public plateQueueManagerService: PlateQueueManagerService,
               public i18nService: I18nService,
+              public themeService: ThemeService,
               private _router: Router) {
     this.i18n = i18nService.instance;
   }
