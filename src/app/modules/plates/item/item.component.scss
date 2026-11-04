@@ -388,3 +388,29 @@
     }
   }
 }
+
+// Tile raggruppata: tutte le righe dello stesso ordine
+.item_group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-weight: 600;
+
+  .item_group_line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .item_group_qty {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+  }
+
+  .item_group_notes {
+    font-weight: 400;
+    font-size: 0.8em;
+    opacity: 0.75;
+  }
+}

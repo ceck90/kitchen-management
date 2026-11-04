@@ -168,7 +168,11 @@ export class PlatePageComponent implements OnInit, OnDestroy {
   }
 
   public handleItemEvent(event: any): void {
-    this._plateQueueManagerService.onItemAction(event.plateId, event.item, event.action, event.nextId);
+    if (event.items?.length) {
+      this._plateQueueManagerService.onItemsAction(event.plateId, event.items, event.action, event.nextId);
+    } else {
+      this._plateQueueManagerService.onItemAction(event.plateId, event.item, event.action, event.nextId);
+    }
   }
 
   private _refreshPlateQueue() {

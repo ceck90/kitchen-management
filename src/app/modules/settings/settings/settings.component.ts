@@ -100,6 +100,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       number: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
       quickMoveEnabled: new UntypedFormControl(false),
       quickMoveTargetPlateId: new UntypedFormControl(""),
+      groupByOrder: new UntypedFormControl(false),
       categories: new UntypedFormControl([])
     });
 
@@ -218,6 +219,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         quickMoveEnabled: new UntypedFormControl(false),
         quickMoveTargetPlateId: new UntypedFormControl(""),
         expandedDoneButtonEnabled: new UntypedFormControl(false),
+        groupByOrder: new UntypedFormControl(false),
         categories: new UntypedFormControl([])
       });
       this.formReady = true;
@@ -248,6 +250,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
             quickMoveEnabled: new UntypedFormControl(quickMoveSettings.enabled),
             quickMoveTargetPlateId: new UntypedFormControl(quickMoveSettings.targetPlateId),
             expandedDoneButtonEnabled: new UntypedFormControl(expandedDoneButtonEnabled),
+            groupByOrder: new UntypedFormControl(!!plate.groupByOrder),
             categories: new UntypedFormControl(plate.categories || [])
           });
           this.formReady = true;

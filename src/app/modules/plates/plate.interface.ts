@@ -22,6 +22,8 @@ export interface ItemEvent {
   action: PlateMenuItemAction;
   item: PlateMenuItem;
   nextId?: string;
+  /** all the items of a grouped tile (same order), when the plate groups items by order */
+  items?: PlateMenuItem[];
 }
 
 export interface Plate {
@@ -40,4 +42,5 @@ export interface Plate {
   quickMoveTargetPlateId?: string;
   expandedDoneButtonEnabled?: boolean;
   categories?: string[];
+  groupByOrder?: boolean;
 }

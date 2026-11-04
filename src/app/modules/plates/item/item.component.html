@@ -19,9 +19,23 @@
       tooltipPosition="top">
   }
 
-  <span class="item_title">
-    {{config.menuItem.name}}
-  </span>
+  @if (isGroup) {
+    <span class="item_group">
+      @for (line of groupLines; track line) {
+        <span class="item_group_line">
+          <span class="item_group_qty">{{line.quantity}} ×</span>
+          <span class="item_group_name">{{line.name}}</span>
+          @if (line.notes) {
+            <span class="item_group_notes">{{line.notes}}</span>
+          }
+        </span>
+      }
+    </span>
+  } @else {
+    <span class="item_title">
+      {{config.menuItem.name}}
+    </span>
+  }
   @if (!readonly) {
     <span class="item_order">
       #{{config.orderNumber}} - T: {{config.tableNumber}}
@@ -32,7 +46,7 @@
       #{{config.orderNumber}} - T: {{config.tableNumber}}
     </span>
   }
-  <span class="item_note">{{ getNotes(config) }}</span>
+  <span class="item_note">{{ isGroup ? (config.orderNotes || '').trim() : getNotes(config) }}</span>
   @if (!readonly) {
     <span class="item_actions">
       @if (config.takeAway) {

@@ -193,13 +193,18 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Update item status and plate
-    const item = event.item;
-    item.status = (event.action !== PlateItemStatus.Moved) ? event.action : Status.Progress;
-    item.plate = event.nextId ? { id: event.nextId } : (event.plateId ? { id: event.plateId } : null);
+    // Update item status and plate (all the items of the tile when the plate groups by order)
+    const items = event.items?.length ? event.items : [event.item];
+    items.forEach((item: any) => {
+      item.status = (event.action !== PlateItemStatus.Moved) ? event.action : Status.Progress;
+      item.plate = event.nextId ? { id: event.nextId } : (event.plateId ? { id: event.plateId } : null);
+    });
 
     // Send update to server
-    this._plateMenuItemsService.update(item).subscribe({
+    const update$: Observable<unknown> = items.length > 1
+      ? this._plateMenuItemsService.updateAll(items)
+      : this._plateMenuItemsService.update(items[0]);
+    update$.subscribe({
       next: () => {
         console.log('Item updated successfully');
         // Refresh both queues to reflect changes

@@ -69,6 +69,18 @@ export class PlateQueueManagerService {
     return this._changes$.value > 0;
   }
 
+  /**
+   * Applica la stessa azione a tutti gli item di una tile raggruppata con un'unica richiesta.
+   */
+  public onItemsAction(plateId: string, items: PlateMenuItem[], action: PlateMenuItemAction, nextPlateId?: string): void {
+    items.forEach(item => {
+      this._validateItem(item);
+      item.status = (action != PlateItemStatus.Moved) ? action : Status.Progress;
+      item.plate = (action === PlateItemStatus.Moved && nextPlateId) ? {id: nextPlateId} : (plateId ? {id: plateId} : null);
+    });
+    this._plateMenuItemsService.updateAll(items).subscribe();
+  }
+
   public onItemAction(plateId: string, item: PlateMenuItem, action: PlateMenuItemAction, nextPlateId?: string): void {
     this._validateItem(item);
 
