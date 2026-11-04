@@ -1,4 +1,4 @@
-@import 'mixins';
+@use 'mixins' as *;
 
 // Modern Orders Management Styles
 .orders-management-container {

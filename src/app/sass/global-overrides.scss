@@ -1,8 +1,8 @@
 // Global PrimeNG Component Overrides
 // Apply modern styling to all PrimeNG components across the app
 
-@import 'theme';
-@import 'mixins';
+@use 'theme' as *;
+@use 'mixins' as *;
 
 // Theme-aware global styles
 body {

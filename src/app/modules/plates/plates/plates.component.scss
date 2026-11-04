@@ -1,5 +1,5 @@
-@import '../../../sass/theme';
-@import '../../../sass/mixins';
+@use '../../../sass/theme' as *;
+@use '../../../sass/mixins' as *;
 
 // Modern Page Header - Optimized for ceiling display
 .plates-page-header {

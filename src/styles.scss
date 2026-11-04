@@ -1,7 +1,7 @@
 // Import global design system
-@import 'app/sass/theme';
-@import 'app/sass/mixins';
-@import 'app/sass/global-overrides';
+@use 'app/sass/theme' as *;
+@use 'app/sass/mixins' as *;
+@use 'app/sass/global-overrides' as *;
 
 html, body {
   margin: 0;

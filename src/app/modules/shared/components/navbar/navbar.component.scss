@@ -1,4 +1,4 @@
-@import '../../../../../app/sass/theme';
+@use '../../../../../app/sass/theme' as *;
 
 .modern-navbar {
   position: fixed;

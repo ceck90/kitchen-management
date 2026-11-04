@@ -1,4 +1,4 @@
-@import 'mixins';
+@use 'mixins' as *;
 
 // Order Creation Container
 .order-creation-container {
