@@ -229,7 +229,7 @@
                   <p-button
                     type="button"
                     [icon]="plate.enabled ? 'pi pi-power-off' : 'pi pi-check'"
-                    [class]="plate.enabled ? 'p-button-warning p-button-sm p-button-text' : 'p-button-success p-button-sm p-button-text'"
+                    [styleClass]="plate.enabled ? 'p-button-warning p-button-sm p-button-text' : 'p-button-success p-button-sm p-button-text'"
                     [pTooltip]="plate.enabled ? i18n.SETTINGS.PLATES.TURN_OFF : i18n.SETTINGS.PLATES.TURN_ON"
                     tooltipPosition="top"
                     (click)="onSwitchPlate({ id: plate.id, enable: !plate.enabled })">

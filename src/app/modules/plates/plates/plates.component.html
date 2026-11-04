@@ -21,7 +21,7 @@
       <p-button
         [label]="i18n.PLATE.UNASSIGNED_ORDERS + (unassignedItems.length > 0 ? ' (' + unassignedItems.length + ')' : '')"
         [icon]="showOverlay ? 'pi pi-times' : 'pi pi-list'"
-        [class]="showOverlay ? 'p-button-danger' : 'p-button-info'"
+        [styleClass]="showOverlay ? 'p-button-danger' : 'p-button-info'"
         (click)="toggleNoQueuedItemsOverlay()">
       </p-button>
       @if (showOverlay) {

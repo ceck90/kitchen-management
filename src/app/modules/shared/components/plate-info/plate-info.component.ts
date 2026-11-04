@@ -25,7 +25,7 @@ import {Plate} from "../../../plates/plate.interface";
         <p-button
           type="button"
           [icon]="config.enabled ? 'pi pi-power-off' : 'pi pi-check'"
-          [class]="config.enabled ? 'p-button-warning p-button-sm' : 'p-button-success p-button-sm'"
+          [styleClass]="config.enabled ? 'p-button-warning p-button-sm' : 'p-button-success p-button-sm'"
           [label]="config.enabled ? 'Spegni' : 'Accendi'"
           [pTooltip]="config.enabled ? 'Spegni la piastra' : 'Accendi la piastra'"
           tooltipPosition="top"
