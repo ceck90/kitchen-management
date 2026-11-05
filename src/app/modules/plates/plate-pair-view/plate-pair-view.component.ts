@@ -102,7 +102,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
     this._subs.add(
       this._plateService.getById(plateId1).subscribe(
         (plate: Plate) => {
-          this.plate1Config = this._enrichPlateWithQuickMoveSettings(plate);
+          this.plate1Config = plate;
           plate1Loaded = true;
           if (plate2Loaded) {
             this._loadQueues();
@@ -115,7 +115,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
     this._subs.add(
       this._plateService.getById(plateId2).subscribe(
         (plate: Plate) => {
-          this.plate2Config = this._enrichPlateWithQuickMoveSettings(plate);
+          this.plate2Config = plate;
           plate2Loaded = true;
           if (plate1Loaded) {
             this._loadQueues();
@@ -128,7 +128,7 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
     // Load all plates for quick move - arricchisci con quickMove settings
     this._subs.add(
       this._plateService.getAll().subscribe((plates: Plate[]) => {
-        this.plateList = plates.filter(p => p.enabled).map(p => this._enrichPlateWithQuickMoveSettings(p));
+        this.plateList = plates.filter(p => p.enabled).map(p => p);
       })
     );
   }
@@ -193,13 +193,18 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Update item status and plate
-    const item = event.item;
-    item.status = (event.action !== PlateItemStatus.Moved) ? event.action : Status.Progress;
-    item.plate = event.nextId ? { id: event.nextId } : (event.plateId ? { id: event.plateId } : null);
+    // Update item status and plate (all the items of the tile when the plate groups by order)
+    const items = event.items?.length ? event.items : [event.item];
+    items.forEach((item: any) => {
+      item.status = (event.action !== PlateItemStatus.Moved) ? event.action : Status.Progress;
+      item.plate = event.nextId ? { id: event.nextId } : (event.plateId ? { id: event.plateId } : null);
+    });
 
     // Send update to server
-    this._plateMenuItemsService.update(item).subscribe({
+    const update$: Observable<unknown> = items.length > 1
+      ? this._plateMenuItemsService.updateAll(items)
+      : this._plateMenuItemsService.update(items[0]);
+    update$.subscribe({
       next: () => {
         console.log('Item updated successfully');
         // Refresh both queues to reflect changes
@@ -222,42 +227,6 @@ export class PlatePairViewComponent implements OnInit, OnDestroy {
       return this.plateList;
     }
     return this.plateList.filter(p => p.id !== excludePlate.id);
-  }
-
-  private _enrichPlateWithQuickMoveSettings(plate: Plate): Plate {
-    if (!plate.id) return plate;
-    
-    const savedQuickMove = localStorage.getItem(`plate_quickMove_${plate.id}`);
-    const savedExpandedDoneButton = localStorage.getItem(`plate_expandedDoneButton_${plate.id}`);
-    
-    let enrichedPlate = { ...plate };
-    
-    if (savedQuickMove) {
-      try {
-        const settings = JSON.parse(savedQuickMove);
-        enrichedPlate = {
-          ...enrichedPlate,
-          quickMoveEnabled: settings.enabled,
-          quickMoveTargetPlateId: settings.targetPlateId
-        };
-      } catch (e) {
-        // Ignora errori di parsing
-      }
-    }
-    
-    if (savedExpandedDoneButton) {
-      try {
-        const settings = JSON.parse(savedExpandedDoneButton);
-        enrichedPlate = {
-          ...enrichedPlate,
-          expandedDoneButtonEnabled: settings.enabled
-        };
-      } catch (e) {
-        // Ignora errori di parsing
-      }
-    }
-    
-    return enrichedPlate;
   }
 
   public onPlateViewModeChange(viewMode: 'rows' | 'columns', plate: Plate): void {

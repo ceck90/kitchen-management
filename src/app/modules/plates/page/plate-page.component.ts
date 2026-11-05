@@ -119,7 +119,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
     this._subs.add(
       this._plateService.getAll().subscribe((plates: Plate[]) => {
         // Arricchisci le piastre con le configurazioni quickMove dal localStorage
-        this.plateList = plates.map(plate => this._enrichPlateWithQuickMoveSettings(plate));
+        this.plateList = plates.map(plate => plate);
       })
     );
 
@@ -131,7 +131,7 @@ export class PlatePageComponent implements OnInit, OnDestroy {
 
     this._subs.add(this._plateService.getById(this._id!)
       .subscribe((plate: Plate) => {
-        this.config = this._enrichPlateWithQuickMoveSettings(plate);
+        this.config = plate;
         if (plate.name) this._titleService.setTitle(plate.name);
         this._plateService.getStatusById(this._id!).subscribe({
           next: (items: PlateMenuItem[]) => {
@@ -168,13 +168,17 @@ export class PlatePageComponent implements OnInit, OnDestroy {
   }
 
   public handleItemEvent(event: any): void {
-    this._plateQueueManagerService.onItemAction(event.plateId, event.item, event.action, event.nextId);
+    if (event.items?.length) {
+      this._plateQueueManagerService.onItemsAction(event.plateId, event.items, event.action, event.nextId);
+    } else {
+      this._plateQueueManagerService.onItemAction(event.plateId, event.item, event.action, event.nextId);
+    }
   }
 
   private _refreshPlateQueue() {
     this._subs.add(
       this._plateService.getById(this.config.id!).subscribe(plate => {
-        this.config = this._enrichPlateWithQuickMoveSettings(plate);
+        this.config = plate;
         // refresh plate queue
         this._plateService.getStatusById(this.config.id!).subscribe(items => {
           this.queue.values = items;
@@ -182,42 +186,6 @@ export class PlatePageComponent implements OnInit, OnDestroy {
         })
       })
     );
-  }
-
-  private _enrichPlateWithQuickMoveSettings(plate: Plate): Plate {
-    if (!plate.id) return plate;
-    
-    const savedQuickMove = localStorage.getItem(`plate_quickMove_${plate.id}`);
-    const savedExpandedDoneButton = localStorage.getItem(`plate_expandedDoneButton_${plate.id}`);
-    
-    let enrichedPlate = { ...plate };
-    
-    if (savedQuickMove) {
-      try {
-        const settings = JSON.parse(savedQuickMove);
-        enrichedPlate = {
-          ...enrichedPlate,
-          quickMoveEnabled: settings.enabled,
-          quickMoveTargetPlateId: settings.targetPlateId
-        };
-      } catch (e) {
-        // Ignora errori di parsing
-      }
-    }
-    
-    if (savedExpandedDoneButton) {
-      try {
-        const settings = JSON.parse(savedExpandedDoneButton);
-        enrichedPlate = {
-          ...enrichedPlate,
-          expandedDoneButtonEnabled: settings.enabled
-        };
-      } catch (e) {
-        // Ignora errori di parsing
-      }
-    }
-    
-    return enrichedPlate;
   }
 
 }

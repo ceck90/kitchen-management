@@ -637,6 +637,24 @@
         </div>
       </div>
       <div class="form-field">
+        <label for="groupByOrder">
+          <i class="pi pi-objects-column"></i>
+          Raggruppa per ordine
+        </label>
+        <div class="quick-move-container">
+          <div class="quick-move-toggle">
+            <p-toggle-switch
+              id="groupByOrder"
+              formControlName="groupByOrder">
+            </p-toggle-switch>
+            <span class="toggle-label">Mostra le righe dello stesso ordine in un'unica tile</span>
+          </div>
+          <small class="field-hint">
+            Gli articoli dello stesso ordine in lavorazione su questa piastra compaiono insieme e si completano (done) con un solo click
+          </small>
+        </div>
+      </div>
+      <div class="form-field">
         <label for="expandedDoneButtonEnabled">
           <i class="pi pi-check"></i>
           Pulsante Done in Vista Espansa

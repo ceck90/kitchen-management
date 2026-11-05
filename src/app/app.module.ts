@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, inject, provideAppInitializer} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -9,6 +9,7 @@ import {FileSystemConnectorService} from "./services/file-system-connector.servi
 import {HttpRestConnectorService} from "./services/http-rest-connector.service";
 import {SharedModule} from "./modules/shared/shared.module";
 import {I18nService} from "./services/i18n.service";
+import {AppSettingsService} from "./services/app-settings.service";
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {WebSocketService} from './services/web-socket-service';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -35,6 +36,8 @@ import Aura from '@primeuix/themes/aura';
         },
         WebSocketService,
         provideHttpClient(withInterceptorsFromDi()),
+        // the settings kept on the server must be loaded before the services that read them are created
+        provideAppInitializer(() => inject(AppSettingsService).init()),
         providePrimeNG({
             theme: {
                 preset: Aura,

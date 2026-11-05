@@ -67,10 +67,11 @@
            'columns': viewMode === 'columns',
            'expanded-view': readonly
          }">
-          @for (item of progressItems; track item) {
+          @for (tile of progressTiles; track tile.item) {
             <item (onCancelEvent)="handleItemEvent($event)"
               (onDoneEvent)="handleItemEvent($event)"
-              [config]="item"
+              [config]="tile.item"
+              [groupItems]="tile.group"
               [plateList]="plateList"
               [readonly]="readonly"
               [showDelay]="!showExpand || showItemDelays"

@@ -2,22 +2,21 @@ import {Injectable} from '@angular/core';
 import {I18N as i18nIta} from "../../assets/i18n-ita";
 import {I18N_ENG as i18nEng} from "../../assets/i18n-eng";
 import {BehaviorSubject, Observable} from 'rxjs';
+import {AppSettingsService} from './app-settings.service';
 
 export type SupportedLanguage = 'it' | 'en';
 
 @Injectable()
 export class I18nService {
 
-  private readonly STORAGE_KEY = 'app-language';
   private _i18n: any;
   private _currentLanguage$ = new BehaviorSubject<SupportedLanguage>('it');
 
-  constructor() {
-    const storedLang = this._loadLanguageFromStorage();
-    const browserLang = this._getBrowserLanguage();
-    const initialLang = storedLang || browserLang;
-    
-    this.setLanguage(initialLang);
+  constructor(private _appSettings: AppSettingsService) {
+    const storedLang = this._appSettings.settings.language;
+    const initialLang = (storedLang === 'it' || storedLang === 'en') ? storedLang : this._getBrowserLanguage();
+
+    this._applyLanguage(initialLang);
   }
 
   public get instance(): any {
@@ -33,6 +32,11 @@ export class I18nService {
   }
 
   public setLanguage(lang: SupportedLanguage): void {
+    this._applyLanguage(lang);
+    this._appSettings.update({language: lang});
+  }
+
+  private _applyLanguage(lang: SupportedLanguage): void {
     this._currentLanguage$.next(lang);
     
     if (lang === 'en') {
@@ -40,8 +44,6 @@ export class I18nService {
     } else {
       this._i18n = i18nIta;
     }
-    
-    this._saveLanguageToStorage(lang);
   }
 
   public getAvailableLanguages(): Array<{code: SupportedLanguage, label: string, flag: string}> {
@@ -61,25 +63,5 @@ export class I18nService {
     }
     
     return 'it'; // Default
-  }
-
-  private _loadLanguageFromStorage(): SupportedLanguage | null {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored === 'it' || stored === 'en') {
-        return stored;
-      }
-    } catch (e) {
-      console.warn('Failed to load language from localStorage', e);
-    }
-    return null;
-  }
-
-  private _saveLanguageToStorage(lang: SupportedLanguage): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, lang);
-    } catch (e) {
-      console.warn('Failed to save language to localStorage', e);
-    }
   }
 }

@@ -24,6 +24,8 @@ export class ItemComponent implements OnInit, OnDestroy {
   @Input() public readonly: boolean = false;
   @Input() public showDelay: boolean = true; // default true per vista espansa
   @Input() public currentPlate?: Plate; // Configurazione della piastra corrente
+  /** Tutti gli item dello stesso ordine mostrati in un'unica tile (piastre con raggruppamento per ordine) */
+  @Input() public groupItems: PlateMenuItem[] = [];
 
   @Output() public onDoneEvent: EventEmitter<ItemEvent> = new EventEmitter<ItemEvent>(false);
   @Output() public onCancelEvent: EventEmitter<ItemEvent> = new EventEmitter<ItemEvent>(false);
@@ -84,14 +86,16 @@ export class ItemComponent implements OnInit, OnDestroy {
   public onDone(): void {
     this.onDoneEvent.emit({
       action: Status.Done,
-      item: this.config
+      item: this.config,
+      items: this.isGroup ? this.groupItems : undefined
     } as ItemEvent);
   }
 
   public onCancel(status: PlateMenuItemAction): void {
     const event: ItemEvent = {
       action: status,
-      item: this.config
+      item: this.config,
+      items: this.isGroup ? this.groupItems : undefined
     } as ItemEvent;
 
     this.onCancelEvent.emit(event);
@@ -113,6 +117,7 @@ export class ItemComponent implements OnInit, OnDestroy {
     const event: ItemEvent = {
       action: PlateItemStatus.Moved,
       item: this.config,
+      items: this.isGroup ? this.groupItems : undefined,
       nextId: plate.id,
       plateId: '' // Sarà impostato dal componente parent
     } as ItemEvent;
@@ -131,6 +136,7 @@ export class ItemComponent implements OnInit, OnDestroy {
       const event: ItemEvent = {
         action: PlateItemStatus.Moved,
         item: this.config,
+        items: this.isGroup ? this.groupItems : undefined,
         nextId: targetPlate.id,
         plateId: '' // Sarà impostato dal componente parent
       } as ItemEvent;
@@ -145,6 +151,28 @@ export class ItemComponent implements OnInit, OnDestroy {
     }
     const targetPlate = this.plateList.find(p => p.id === this.currentPlate?.quickMoveTargetPlateId);
     return targetPlate?.name || '';
+  }
+
+  public get isGroup(): boolean {
+    return this.groupItems.length > 1;
+  }
+
+  /**
+   * Righe della tile raggruppata: gli item con lo stesso nome e le stesse note vengono sommati (es. "2 × Panino")
+   */
+  public get groupLines(): { name: string; quantity: number; notes: string }[] {
+    const lines = new Map<string, { name: string; quantity: number; notes: string }>();
+    for (const item of this.groupItems) {
+      const notes = (item.notes || '').trim();
+      const key = `${item.menuItem?.id}|${notes}`;
+      const line = lines.get(key);
+      if (line) {
+        line.quantity++;
+      } else {
+        lines.set(key, {name: item.menuItem?.name || '', quantity: 1, notes});
+      }
+    }
+    return [...lines.values()];
   }
 
   public getNotes(config: PlateMenuItem): string {

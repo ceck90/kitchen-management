@@ -6,13 +6,13 @@ export const environment = {
   production: false,
   connector: "api",
   webSocket: {
-    endpoint: 'http://10.10.1.12:8080/ws',
+    endpoint: 'http://127.0.0.1:8080/ws',
     defaultTopic: '/topic/greetings',
     pkmiTopic: '/topic/pkmi'
   },
   api: {
     protocol: 'http',
-    hostname: '10.10.1.12',
+    hostname: '127.0.0.1',
     port: '8080',
     context: null
   }

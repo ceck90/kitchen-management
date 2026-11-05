@@ -1,3 +1,4 @@
+import {buildPlateTiles, PlateTile} from "../plate-tiles";
 import {Component, ElementRef, EventEmitter, Input, NgModule, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {ItemEvent, mode, Plate, PlateInterface} from "../plate.interface";
 import {I18nService} from "../../../services/i18n.service";
@@ -62,6 +63,8 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
   public showOverlay: boolean = false;
   public showSortOverlay: boolean = false;
   public progressItems: PlateMenuItem[] = [];
+  /** Tile mostrate in lavorazione: una per item, o una per ordine se la piastra raggruppa per ordine */
+  public progressTiles: PlateTile[] = [];
   public todoItems: PlateMenuItem[] = [];
   public sortingOptions: MenuItem[] = [];
   public selectedSortingType: SortType = "DATE_ASC";
@@ -87,6 +90,9 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
 
   public ngOnChanges(changes: SimpleChanges): void {
     // Quando config viene settato o cambia, carica la view mode SE la route è già stata processata
+    if (changes['config']) {
+      this.buildTiles();
+    }
     if (changes['config'] && changes['config'].currentValue && changes['config'].currentValue.id) {
       // Usa setTimeout per assicurarsi che la route sia stata processata
       setTimeout(() => {
@@ -129,6 +135,8 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
           this.showOverlay = false;
         }
         
+        this.buildTiles();
+
         // Calcola il ritardo ogni volta che cambiano gli items
         this.calculateDelay();
       })
@@ -251,6 +259,8 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
         break;
     }
 
+    this.buildTiles();
+
     if (this.showSortOverlay)
       this.showSortOverlay = false;
   }
@@ -299,6 +309,14 @@ export class PlateComponent implements OnInit, OnChanges, OnDestroy {
       this.onBadgeMouseEnter();
     else
       this.onBadgeMouseLeave();
+  }
+
+  /**
+   * Costruisce le tile dagli item in lavorazione. Con il raggruppamento per ordine tutti gli item dello
+   * stesso ordine diventano un'unica tile (vedi buildPlateTiles).
+   */
+  public buildTiles(): void {
+    this.progressTiles = buildPlateTiles(this.progressItems, !!this.config?.groupByOrder);
   }
 
   public handleItemEvent(event: ItemEvent) {

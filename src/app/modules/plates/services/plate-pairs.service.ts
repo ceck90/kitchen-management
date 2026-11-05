@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AppSettingsService } from '../../../services/app-settings.service';
 
 export interface PlatePair {
   id: string;
@@ -14,11 +15,10 @@ export interface PlatePair {
   providedIn: 'root'
 })
 export class PlatePairsService {
-  private readonly STORAGE_KEY = 'plate_pairs_config';
   private _pairs$ = new BehaviorSubject<PlatePair[]>([]);
 
-  constructor() {
-    this._loadFromStorage();
+  constructor(private _appSettings: AppSettingsService) {
+    this._pairs$.next(this._appSettings.settings.platePairs || []);
   }
 
   public get pairs$(): Observable<PlatePair[]> {
@@ -56,21 +56,8 @@ export class PlatePairsService {
   }
 
   private _savePairs(pairs: PlatePair[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(pairs));
+    this._appSettings.update({ platePairs: pairs });
     this._pairs$.next(pairs);
-  }
-
-  private _loadFromStorage(): void {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        const pairs = JSON.parse(stored);
-        this._pairs$.next(pairs);
-      }
-    } catch (error) {
-      console.error('Error loading plate pairs from storage:', error);
-      this._pairs$.next([]);
-    }
   }
 
   private _generateId(): string {

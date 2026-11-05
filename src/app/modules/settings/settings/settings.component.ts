@@ -100,6 +100,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       number: new UntypedFormControl(0, [Validators.required, Validators.pattern("^[0-9]*$")]),
       quickMoveEnabled: new UntypedFormControl(false),
       quickMoveTargetPlateId: new UntypedFormControl(""),
+      expandedDoneButtonEnabled: new UntypedFormControl(false),
+      groupByOrder: new UntypedFormControl(false),
       categories: new UntypedFormControl([])
     });
 
@@ -139,9 +141,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   public onSubmit(): void {
     const plateId = this.selectedPlate?.id;
-    const quickMoveEnabled = this.form?.get("quickMoveEnabled")?.value;
-    const quickMoveTargetPlateId = this.form?.get("quickMoveTargetPlateId")?.value;
-    const expandedDoneButtonEnabled = this.form?.get("expandedDoneButtonEnabled")?.value;
 
     if (this.isEditMode) {
       // Update existing plate
@@ -153,11 +152,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         categories: this.form?.get("categories")?.value || []
       }).subscribe(
         _ => {
-          // Salva quickMove settings in localStorage
-          this._saveQuickMoveSettings(plateId!, quickMoveEnabled, quickMoveTargetPlateId);
-          // Salva expandedDoneButton settings in localStorage
-          this._saveExpandedDoneButtonSettings(plateId!, expandedDoneButtonEnabled);
-          
           this._messageService.add({
             severity: 'success',
             summary: 'Piastra Modificata',
@@ -177,13 +171,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         categories: this.form?.get("categories")?.value || []
       }).subscribe(
         (createdPlate: Plate) => {
-          // Salva quickMove settings in localStorage
-          if (createdPlate.id) {
-            this._saveQuickMoveSettings(createdPlate.id, quickMoveEnabled, quickMoveTargetPlateId);
-            // Salva expandedDoneButton settings in localStorage
-            this._saveExpandedDoneButtonSettings(createdPlate.id, expandedDoneButtonEnabled);
-          }
-          
           this._messageService.add({
             severity: 'success',
             summary: 'Piastra Creata',
@@ -218,6 +205,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         quickMoveEnabled: new UntypedFormControl(false),
         quickMoveTargetPlateId: new UntypedFormControl(""),
         expandedDoneButtonEnabled: new UntypedFormControl(false),
+        groupByOrder: new UntypedFormControl(false),
         categories: new UntypedFormControl([])
       });
       this.formReady = true;
@@ -234,20 +222,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
       (plate: Plate) => {
         this.selectedPlate = plate;
         
-        // Carica quickMove settings dal localStorage
-        const quickMoveSettings = this._loadQuickMoveSettings(id);
-        // Carica expandedDoneButton settings dal localStorage
-        const expandedDoneButtonEnabled = this._loadExpandedDoneButtonSettings(id);
-        
         // Crea il form e poi mostra il dialog
         setTimeout(() => {
           this.form = new UntypedFormGroup({
             name: new UntypedFormControl(plate.name, Validators.required),
             color: new UntypedFormControl(plate.color, Validators.required),
             number: new UntypedFormControl(plate.slot![1], [Validators.required, Validators.pattern("^[0-9]*$")]),
-            quickMoveEnabled: new UntypedFormControl(quickMoveSettings.enabled),
-            quickMoveTargetPlateId: new UntypedFormControl(quickMoveSettings.targetPlateId),
-            expandedDoneButtonEnabled: new UntypedFormControl(expandedDoneButtonEnabled),
+            quickMoveEnabled: new UntypedFormControl(!!plate.quickMoveEnabled),
+            quickMoveTargetPlateId: new UntypedFormControl(plate.quickMoveTargetPlateId || ''),
+            expandedDoneButtonEnabled: new UntypedFormControl(!!plate.expandedDoneButtonEnabled),
+            groupByOrder: new UntypedFormControl(!!plate.groupByOrder),
             categories: new UntypedFormControl(plate.categories || [])
           });
           this.formReady = true;
@@ -374,46 +358,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const used = Math.max(0, plate.slot[0]);
     const total = plate.slot[1];
     return Math.min(100, (used / total) * 100);
-  }
-
-  private _saveQuickMoveSettings(plateId: string, enabled: boolean, targetPlateId: string): void {
-    const settings = {
-      enabled: enabled ?? false,
-      targetPlateId: targetPlateId || ''
-    };
-    localStorage.setItem(`plate_quickMove_${plateId}`, JSON.stringify(settings));
-  }
-
-  private _loadQuickMoveSettings(plateId: string): { enabled: boolean, targetPlateId: string } {
-    const saved = localStorage.getItem(`plate_quickMove_${plateId}`);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return { enabled: false, targetPlateId: '' };
-      }
-    }
-    return { enabled: false, targetPlateId: '' };
-  }
-
-  private _saveExpandedDoneButtonSettings(plateId: string, enabled: boolean): void {
-    const settings = {
-      enabled: enabled ?? false
-    };
-    localStorage.setItem(`plate_expandedDoneButton_${plateId}`, JSON.stringify(settings));
-  }
-
-  private _loadExpandedDoneButtonSettings(plateId: string): boolean {
-    const saved = localStorage.getItem(`plate_expandedDoneButton_${plateId}`);
-    if (saved) {
-      try {
-        const settings = JSON.parse(saved);
-        return settings.enabled;
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
   }
 
   // ========================================
